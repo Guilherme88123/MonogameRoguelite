@@ -13,7 +13,7 @@ public class DoorModel : BaseEntityModel
     {
         DirectionPosition = direction;
         Color = Color.DarkSlateGray;
-        Size = 96;
+        Size = new Vector2(96, 96);
         Position = GetPosition();
     }
 
@@ -25,19 +25,19 @@ public class DoorModel : BaseEntityModel
         switch (DirectionPosition)
         {
             case DirectionType.Left:
-                x = 15 - Size;
-                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (Size / 2);
+                x = 15 - (int)Size.X;
+                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - ((int)Size.Y / 2);
                 break;
             case DirectionType.Right:
                 x = GlobalVariables.Graphics.PreferredBackBufferWidth - 15;
-                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (Size / 2);
+                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - ((int)Size.Y / 2);
                 break;
             case DirectionType.Up:
-                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (Size / 2);
-                y = 15 - Size;
+                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - ((int)Size.X / 2);
+                y = 15 - (int)Size.Y;
                 break;
             case DirectionType.Down:
-                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (Size / 2);
+                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - ((int)Size.X / 2);
                 y = GlobalVariables.Graphics.PreferredBackBufferHeight - 15;
                 break;
         }

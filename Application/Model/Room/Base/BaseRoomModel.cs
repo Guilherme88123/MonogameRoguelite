@@ -26,6 +26,8 @@ public abstract class BaseRoomModel
     {
         Width = width;
         Height = height;
+
+        LoadWalls();
     }
 
     protected (int, int) GetRandomPosition()
@@ -54,7 +56,16 @@ public abstract class BaseRoomModel
 
     public virtual void Draw()
     {
+        //DrawGround();
+
         Entities.ForEach(x => x.Draw());
+    }
+
+    private void DrawGround()
+    {
+        var ground = new Rectangle(0, 0, Width, Height);
+
+        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, ground, Color.MediumSeaGreen);
     }
 
     private void VerifyEnemies()
@@ -92,8 +103,30 @@ public abstract class BaseRoomModel
                 EntitiesToAdd.Add(instance);
             }
         }
+    }
 
-        //var wall = new WallModel(GetRandomPosition());
-        //EntitiesToAdd.Add(wall);
+    private void LoadWalls()
+    {
+        //var tileSize = new WallModel((0, 0)).Size;
+
+        //for (int x = 0; x < Width; x += tileSize)
+        //{
+        //    EntitiesToAdd.Add(new WallModel((x, 0)));
+        //    EntitiesToAdd.Add(new WallModel((x, Height - tileSize)));
+        //}
+
+        //// Esquerda e direita
+        //for (int y = 0; y < Height; y += tileSize)
+        //{
+        //    EntitiesToAdd.Add(new WallModel((0, y)));
+        //    EntitiesToAdd.Add(new WallModel((Width - tileSize, y)));
+        //}
+
+        AddObstacles();
+    }
+
+    protected virtual void AddObstacles()
+    {
+
     }
 }

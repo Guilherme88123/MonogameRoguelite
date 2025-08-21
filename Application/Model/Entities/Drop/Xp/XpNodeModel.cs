@@ -7,7 +7,7 @@ public class XpNodeModel : BaseDropModel
 {
     public XpNodeModel((int x, int y) position) : base(position)
     {
-        Size = 16;
+        Size = new Vector2(16, 16);
         Color = Color.Purple;
         Value = 1;
     }

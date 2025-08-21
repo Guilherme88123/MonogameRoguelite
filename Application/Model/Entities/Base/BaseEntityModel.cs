@@ -7,7 +7,7 @@ namespace Teste001.Model.Entities.Base;
 
 public abstract class BaseEntityModel
 {
-    public int Size { get; set; }
+    public Vector2 Size { get; set; } = new Vector2(64, 64);
     public Vector2 Speed { get; set; } = new();
     public Color Color { get; set; } = Color.White;
     public Vector2 Position { get; set; } = new();
@@ -18,11 +18,10 @@ public abstract class BaseEntityModel
 
     public bool IsDestroyed { get; set; } = false;
 
-    public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+    public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
 
     protected BaseEntityModel((int x, int y) position)
     {
-        Size = 64;
         Position = new Vector2(position.x, position.y);
     }
 
@@ -36,7 +35,7 @@ public abstract class BaseEntityModel
 
     public virtual void Colision(BaseEntityModel model)
     {
-        if (model is WallModel)
+        if (model is WallModel && GetType() != typeof(WallModel))
         {
             var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
 

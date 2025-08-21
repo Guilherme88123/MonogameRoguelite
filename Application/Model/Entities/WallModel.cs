@@ -1,5 +1,5 @@
-﻿using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Enemy.Base;
+﻿using Microsoft.Xna.Framework;
+using Teste001.Model.Entities.Base;
 
 namespace Teste001.Model.Entities;
 
@@ -7,7 +7,7 @@ public class WallModel : BaseEntityModel
 {
     public WallModel((int x, int y) position) : base(position)
     {
-        Size = 16;
-        Color = Microsoft.Xna.Framework.Color.DarkOrange;
+        Size = new Vector2(64, 64);
+        Color = Microsoft.Xna.Framework.Color.Brown;
     }
 }

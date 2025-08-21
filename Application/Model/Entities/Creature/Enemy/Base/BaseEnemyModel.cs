@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Enum;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Teste001.Dto;
@@ -11,25 +12,36 @@ namespace Teste001.Model.Entities.Creature.Enemy.Base;
 
 public abstract class BaseEnemyModel : BaseCreatureModel
 {
+    public Vector2 Target { get; set; }
+    public float CampoVisao { get; set; } = 200f;
+
+    public const float DelayIdle = 1.5f;
+    public float DelayIdleAtual { get; set; }
+
     public BaseEnemyModel((int x, int y) position, int maxHealt) : base(position, maxHealt)
     {
+        ChooseNewTarget();
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
     {
-        float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        switch (MoveStatus)
+        {
+            case MoveType.Idle:
+                HandleIdle(gameTime);
+                break;
+            case MoveType.Patrol:
+                HandlePatrol(gameTime);
+                break;
+            case MoveType.Chase:
+                HandleChase(gameTime);
+                break;
+        }
 
-        var speedX = Speed.X;
-        var speedY = Speed.Y;
-
-        if (Position.X <= 0 || Position.X >= GlobalVariables.Graphics.PreferredBackBufferWidth - Size)
-            speedX *= -1;
-        if (Position.Y <= 0 || Position.Y >= GlobalVariables.Graphics.PreferredBackBufferHeight - Size)
-            speedY *= -1;
-
-        Speed = new Vector2(speedX, speedY);
-
-        Position += Speed * delta;
+        if (Vector2.Distance(Position, GlobalVariables.PlayerPosition) < CampoVisao)
+        {
+            MoveStatus = MoveType.Chase;
+        }
 
         base.Update(gameTime, entities);
     }
@@ -41,5 +53,74 @@ public abstract class BaseEnemyModel : BaseCreatureModel
             { typeof(CoinModel), 1 },
             { typeof(XpNodeModel), 1 },
         };
+    }
+
+    public override void Colision(BaseEntityModel model)
+    {
+        if (model is WallModel wall && Speed.LengthSquared() < 0.01f)
+        {
+            ChooseNewTarget();
+        }
+
+        base.Colision(model);
+    }
+
+    private void HandleIdle(GameTime gameTime)
+    {
+        DelayIdleAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (DelayIdleAtual <= 0)
+        {
+            ChooseNewTarget();
+            MoveStatus = MoveType.Patrol;
+        }
+    }
+
+    private void HandlePatrol(GameTime gameTime)
+    {
+        MoveTowards(Target, gameTime);
+
+        if (Vector2.Distance(Position, Target) < 5f)
+        {
+            DelayIdleAtual = DelayIdle;
+            MoveStatus = MoveType.Idle;
+        }
+    }
+
+    private void HandleChase(GameTime gameTime)
+    {
+        var playerPos = GlobalVariables.PlayerPosition;
+
+        if (playerPos == Vector2.Zero)
+        {
+            DelayIdleAtual = DelayIdle;
+            MoveStatus = MoveType.Idle;
+
+            return;
+        }
+
+        MoveTowards(playerPos, gameTime);
+
+        if (Vector2.Distance(Position, playerPos) > CampoVisao)
+        {
+            DelayIdleAtual = DelayIdle;
+            MoveStatus = MoveType.Idle;
+        }
+    }
+
+    private void MoveTowards(Vector2 target, GameTime gameTime)
+    {
+        Vector2 direction = target - Position;
+        if (direction.LengthSquared() > 0.01f)
+        {
+            Move(direction, (float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
+    }
+
+    private void ChooseNewTarget()
+    {
+        Target = new Vector2(
+            new Random().Next(50, GlobalVariables.Graphics.PreferredBackBufferWidth - 50), // limites da sala
+            new Random().Next(50, GlobalVariables.Graphics.PreferredBackBufferHeight - 50)
+        );
     }
 }

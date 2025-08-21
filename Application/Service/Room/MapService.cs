@@ -121,21 +121,21 @@ public class MapService : IMapService
             case DirectionType.Right:
                 X += 1;
                 newPosition = new Vector2(20,
-                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size / 2));
+                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Left:
                 X -= 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth - player.Size - 20,
-                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size / 2));
+                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth - player.Size.X - 20,
+                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Up:
                 Y -= 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size / 2),
-                    GlobalVariables.Graphics.PreferredBackBufferHeight - player.Size - 20);
+                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size.X / 2),
+                    GlobalVariables.Graphics.PreferredBackBufferHeight - player.Size.Y - 20);
                 break;
             case DirectionType.Down:
                 Y += 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size / 2),
+                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size.X / 2),
                     20);
                 break;
         }

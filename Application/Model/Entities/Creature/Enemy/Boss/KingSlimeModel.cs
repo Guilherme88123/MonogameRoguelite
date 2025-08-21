@@ -11,8 +11,10 @@ public class KingSlimeModel : BaseEnemyModel
 {
     public KingSlimeModel((int x, int y) position) : base(position, 30)
     {
-        Size = 128;
-        Speed = new Vector2(50, 50);
+        Size = new Vector2(128, 128);
+        Acceleration = 600f;
+        Friction = 320f;
+        MaxSpeed = 120f;
         Color = Color.DarkRed;
     }
 

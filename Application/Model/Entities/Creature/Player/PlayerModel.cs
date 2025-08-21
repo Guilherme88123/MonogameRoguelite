@@ -29,11 +29,12 @@ public class PlayerModel : BaseCreatureModel
         Acceleration = 1500f;
         Friction = 800f;
         MaxSpeed = 300f;
-        Position = new Vector2(10, 10);
+        Position = new Vector2(position.x, position.y);
         Color = Color.Blue;
         Direction = new Vector2(1, 1);
         MaxXp = 5;
         Level = 1;
+        Size = new Vector2(48, 64);
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -82,13 +83,15 @@ public class PlayerModel : BaseCreatureModel
         if (mouse.LeftButton == ButtonState.Pressed && DelayTiroAtual <= 0)
         {
             var direction = new Vector2(mouse.X, mouse.Y) - Position;
-            entities.Add(new BulletModel(((int)Position.X + Size / 2, (int)Position.Y + Size / 2), direction));
+            entities.Add(new BulletModel(((int)(Position.X + Size.X / 2), (int)(Position.Y + Size.Y / 2)), direction, this));
             DelayTiroAtual = DelayTiro;
         }
 
         #endregion
 
         base.Update(gameTime, entities);
+
+        GlobalVariables.PlayerPosition = new Vector2(Position.X, Position.Y);
     }
 
     public override void Colision(BaseEntityModel model)
@@ -127,6 +130,8 @@ public class PlayerModel : BaseCreatureModel
 
             mapService.Move(door.DirectionPosition, this);
         }
+
+        base.Colision(model);
     }
 
     public override void Draw()
