@@ -1,0 +1,122 @@
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using Teste001.Dto;
+
+namespace Teste001.Model.Entities.Base;
+
+public abstract class BaseEntityModel
+{
+    public int Size { get; set; }
+    public Vector2 Speed { get; set; } = new();
+    public Color Color { get; set; } = Color.White;
+    public Vector2 Position { get; set; } = new();
+    public Vector2 Direction { get; set; } = new();
+    public float Acceleration { get; set; }
+    public float Friction { get; set; }
+    public float MaxSpeed { get; set; }
+
+    public bool IsDestroyed { get; set; } = false;
+
+    public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, Size, Size);
+
+    protected BaseEntityModel((int x, int y) position)
+    {
+        Size = 64;
+        Position = new Vector2(position.x, position.y);
+    }
+
+    public virtual void Update(GameTime gameTime, List<BaseEntityModel> entities)
+    {
+        if (IsDestroyed)
+        {
+            HasDestroyed(gameTime, entities);
+        }
+    }
+
+    public virtual void Colision(BaseEntityModel model)
+    {
+        if (model is WallModel)
+        {
+            var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
+
+            var posX = Position.X;
+            var posY = Position.Y;
+
+            if (intersection.Width < intersection.Height)
+            {
+                // Corrige X
+                if (Position.X < model.Position.X)
+                    posX -= intersection.Width;
+                else
+                    posX += intersection.Width;
+            }
+            else
+            {
+                // Corrige Y
+                if (Position.Y < model.Position.Y)
+                    posY -= intersection.Height;
+                else
+                    posY += intersection.Height;
+            }
+
+            Position = new Vector2(posX, posY);
+        }
+    }
+
+    public virtual void Draw()
+    {
+        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, Rectangle, Color);
+    }
+
+    public virtual void Destroy()
+    {
+        IsDestroyed = true;
+    }
+
+    protected virtual void HasDestroyed(GameTime gameTime, List<BaseEntityModel> entities)
+    {
+        var drops = Drops();
+
+        foreach (var entityType in drops)
+        {
+            for (int i = 0; i < entityType.Value; i++)
+            {
+                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)Position.X, (int)Position.Y))!;
+                entities.Add(instance);
+            }
+        }
+    }
+
+    protected virtual Dictionary<Type, int> Drops()
+    {
+        return new();
+    }
+
+    protected void Move(Vector2 direction, float delta)
+    {
+        if (direction != Vector2.Zero)
+        {
+            direction.Normalize();
+            Speed += direction * Acceleration * delta;
+            Direction = direction;
+        }
+        else
+        {
+            // Aplica atrito
+            if (Speed.Length() > 0)
+            {
+                Vector2 frictionVector = Vector2.Normalize(Speed) * Friction * delta;
+                if (frictionVector.Length() > Speed.Length())
+                    Speed = Vector2.Zero;
+                else
+                    Speed -= frictionVector;
+            }
+        }
+
+        if (Speed.Length() > MaxSpeed)
+            Speed = Vector2.Normalize(Speed) * MaxSpeed;
+
+        Position += Speed * delta;
+    }
+}
