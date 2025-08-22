@@ -1,44 +1,49 @@
 ﻿using Microsoft.Xna.Framework;
-using Teste001.Enum;
-using Teste001.Model.Entities.Base;
-using Teste001.Dto;
+using MonogameRoguelite.Enum;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Room.Base;
 
-namespace Teste001.Model.Entities;
+namespace MonogameRoguelite.Model.Entities;
 
 public class DoorModel : BaseEntityModel
 {
     public readonly DirectionType DirectionPosition;
+    public Vector2 RoomSize { get; set; }
 
-    public DoorModel(DirectionType direction) : base((0, 0))
+    public DoorModel(DirectionType direction, BaseRoomModel room) : base((0, 0))
     {
         DirectionPosition = direction;
         Color = Color.DarkSlateGray;
         Size = new Vector2(96, 96);
+        RoomSize = room.Size;
         Position = GetPosition();
     }
 
     private Vector2 GetPosition()
     {
-        int x = 0;
-        int y = 0;
+        float x = 0f;
+        float y = 0f;
+
+        var wallSize = new WallModel((0, 0)).Size.X;
 
         switch (DirectionPosition)
         {
             case DirectionType.Left:
-                x = 15 - (int)Size.X;
-                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - ((int)Size.Y / 2);
+                x = -wallSize;
+                y = RoomSize.Y / 2 - (Size.Y / 2);
                 break;
             case DirectionType.Right:
-                x = GlobalVariables.Graphics.PreferredBackBufferWidth - 15;
-                y = GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - ((int)Size.Y / 2);
+                x = RoomSize.X - (int)(Size.X - wallSize);
+                y = RoomSize.Y / 2 - (Size.Y / 2);
                 break;
             case DirectionType.Up:
-                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - ((int)Size.X / 2);
-                y = 15 - (int)Size.Y;
+                x = RoomSize.X / 2 - (Size.X / 2);
+                y = -wallSize;
                 break;
             case DirectionType.Down:
-                x = GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - ((int)Size.X / 2);
-                y = GlobalVariables.Graphics.PreferredBackBufferHeight - 15;
+                x = RoomSize.X / 2 - (Size.X / 2);
+                y = RoomSize.Y - (Size.Y - wallSize);
                 break;
         }
 

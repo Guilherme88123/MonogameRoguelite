@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Teste001.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Base;
 
-namespace Teste001.Model.Entities;
+namespace MonogameRoguelite.Model.Entities;
 
 public class WallModel : BaseEntityModel
 {

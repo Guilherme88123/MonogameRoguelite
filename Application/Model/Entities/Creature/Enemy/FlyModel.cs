@@ -1,16 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities;
-using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
 namespace Application.Model.Entities.Creature.Enemy;
 
 public class FlyModel : BaseEnemyModel
 {
-    public const float DelayTiro = 1.5f;
+    public const float DelayTiro = 2f;
     public float DelayTiroAtual { get; set; } = DelayTiro;
 
     public FlyModel((int x, int y) position) : base(position, 3)
@@ -20,6 +20,7 @@ public class FlyModel : BaseEnemyModel
         Friction = 300f;
         MaxSpeed = 100f;
         Color = Color.DarkGray;
+        VisionRange = 500f;
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)

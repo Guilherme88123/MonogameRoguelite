@@ -1,4 +1,4 @@
-﻿namespace Teste001.Enum;
+﻿namespace MonogameRoguelite.Enum;
 
 public enum DirectionType
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Teste001.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Base;
 
-namespace Teste001.Model.Entities.Drop.Base;
+namespace MonogameRoguelite.Model.Entities.Drop.Base;
 
 public class BaseDropModel : BaseEntityModel
 {

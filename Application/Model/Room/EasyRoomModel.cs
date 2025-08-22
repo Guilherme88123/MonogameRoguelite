@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities;
-using Teste001.Model.Entities.Creature.Enemy;
-using Teste001.Model.Room.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities;
+using MonogameRoguelite.Model.Entities.Creature.Enemy;
+using MonogameRoguelite.Model.Room.Base;
 
-namespace Teste001.Model.Room;
+namespace MonogameRoguelite.Model.Room;
 
 public class EasyRoomModel : BaseRoomModel
 {
-    public EasyRoomModel() : base(800, 600)
+    public EasyRoomModel() : base(1500, 1000)
     {
         LoadInitialEntities(new Dictionary<int, Type>()
         {

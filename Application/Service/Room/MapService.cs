@@ -1,16 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Interface.Room;
+using Microsoft.Xna.Framework;
 using System;
-using Teste001.Dto;
-using Teste001.Enum;
-using Teste001.Interface;
-using Teste001.Model.Entities;
-using Teste001.Model.Entities.Creature.Player;
-using Teste001.Model.Room;
-using Teste001.Model.Room.Base;
-using Teste001.Model.Room.Boss;
-using Teste001.Model.Room.Initial;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Enum;
+using MonogameRoguelite.Model.Entities;
+using MonogameRoguelite.Model.Entities.Creature.Player;
+using MonogameRoguelite.Model.Room;
+using MonogameRoguelite.Model.Room.Base;
+using MonogameRoguelite.Model.Room.Boss;
+using MonogameRoguelite.Model.Room.Initial;
 
-namespace Teste001.Service.Room;
+namespace MonogameRoguelite.Service.Room;
 
 public class MapService : IMapService
 {
@@ -19,8 +19,6 @@ public class MapService : IMapService
     private BaseRoomModel[,] Rooms;
     private int X;
     private int Y;
-
-    public BaseRoomModel CurrentRoom { get; set; }
 
     private static readonly (int X, int Y, DirectionType Description)[] Directions =
     {
@@ -44,7 +42,7 @@ public class MapService : IMapService
         int middle = width / 2;
         rooms[middle, middle] = new InitialRoomModel();
         X = Y = middle;
-        CurrentRoom = rooms[middle, middle];
+        GlobalVariables.CurrentRoom = rooms[middle, middle];
 
         int oldX = middle;
         int oldY = middle;
@@ -76,8 +74,8 @@ public class MapService : IMapService
                 rooms[actualX, actualY] = newRoom;
             }
 
-            rooms[oldX, oldY].Entities.Add(new DoorModel(direc));
-            rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainst(direc)));
+            rooms[oldX, oldY].Entities.Add(new DoorModel(direc, rooms[oldX, oldY]));
+            rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainst(direc), rooms[actualX, actualY]));
             (oldX, oldY) = (actualX, actualY);
         }
 
@@ -140,11 +138,11 @@ public class MapService : IMapService
                 break;
         }
 
-        CurrentRoom.Entities.Remove(player);
-        CurrentRoom = Rooms[X, Y];
-        CurrentRoom.Visited = true;
+        GlobalVariables.CurrentRoom.Entities.Remove(player);
+        GlobalVariables.CurrentRoom = Rooms[X, Y];
+        GlobalVariables.CurrentRoom.Visited = true;
         player.Position = newPosition;
-        CurrentRoom.Entities.Add(player);
+        GlobalVariables.CurrentRoom.Entities.Add(player);
     }
 
     public void DrawMap()
@@ -155,7 +153,7 @@ public class MapService : IMapService
         var overlayY = 10;
         var overlayX = GlobalVariables.Graphics.PreferredBackBufferWidth - 10 - overlayWidth;
 
-        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(overlayX, overlayY, overlayWidth, overlayWidth), Color.LightGray * 0.5f);
+        GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(overlayX, overlayY, overlayWidth, overlayWidth), Color.LightGray * 0.5f);
 
         for (int posX = 0; posX < Rooms.GetLength(0); posX++)
         {
@@ -167,7 +165,7 @@ public class MapService : IMapService
                 var y = overlayY + (posY * (width + space)) + space;
                 var x = overlayX + (posX * (width + space)) + space;
 
-                GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, width), GetRoomColor(room));
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, width), GetRoomColor(room));
             }
         }
     }
@@ -176,7 +174,7 @@ public class MapService : IMapService
     {
         return room switch
         {
-            _ when room == CurrentRoom => Color.White,
+            _ when room == GlobalVariables.CurrentRoom => Color.White,
             InitialRoomModel => Color.Blue,
             _ when room.Finished => Color.Green,
             _ when !room.Visited => Color.Transparent,

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Base;
 
-namespace Teste001.Model.Entities;
+namespace MonogameRoguelite.Model.Entities;
 
 public class BulletModel : BaseEntityModel
 {
@@ -26,12 +26,6 @@ public class BulletModel : BaseEntityModel
         float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         Position += Speed * Direction * delta;
-
-        if (Position.X <= 0 || Position.X >= GlobalVariables.Graphics.PreferredBackBufferWidth - Size.X && 
-            Position.Y <= 0 || Position.Y >= GlobalVariables.Graphics.PreferredBackBufferHeight - Size.Y)
-        {
-            Destroy();
-        }
 
         base.Update(gameTime, entities);
     }

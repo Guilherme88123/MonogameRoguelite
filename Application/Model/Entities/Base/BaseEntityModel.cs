@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Teste001.Dto;
+using MonogameRoguelite.Dto;
 
-namespace Teste001.Model.Entities.Base;
+namespace MonogameRoguelite.Model.Entities.Base;
 
 public abstract class BaseEntityModel
 {
@@ -35,7 +35,7 @@ public abstract class BaseEntityModel
 
     public virtual void Colision(BaseEntityModel model)
     {
-        if (model is WallModel && GetType() != typeof(WallModel))
+        if (model is WallModel && GetType() != typeof(WallModel) && GetType() != typeof(DoorModel))
         {
             var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
 
@@ -65,7 +65,7 @@ public abstract class BaseEntityModel
 
     public virtual void Draw()
     {
-        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, Rectangle, Color);
+        GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, Rectangle, Color);
     }
 
     public virtual void Destroy()

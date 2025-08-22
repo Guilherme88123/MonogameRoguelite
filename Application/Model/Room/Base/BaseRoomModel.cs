@@ -2,30 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Teste001.Dto;
-using Teste001.Interface;
-using Teste001.Model.Entities;
-using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Enemy.Base;
-using Teste001.Model.Entities.Creature.Player;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities;
 
-namespace Teste001.Model.Room.Base;
+namespace MonogameRoguelite.Model.Room.Base;
 
 public abstract class BaseRoomModel
 {
     public List<BaseEntityModel> Entities = new();
     public List<BaseEntityModel> EntitiesToAdd = new();
 
-    public int Width { get; }
-    public int Height { get; }
+    public Vector2 Size { get; }
 
     public bool Finished { get; set; } = false;
     public bool Visited { get; set; } = false;
 
     protected BaseRoomModel(int width, int height)
     {
-        Width = width;
-        Height = height;
+        Size = new Vector2(width, height);
 
         LoadWalls();
     }
@@ -33,8 +29,8 @@ public abstract class BaseRoomModel
     protected (int, int) GetRandomPosition()
     {
         var random = new Random();
-        var x = random.Next(50, Width - 50);
-        var y = random.Next(50, Height - 50);
+        var x = random.Next(50, (int)Size.X - 50);
+        var y = random.Next(50, (int)Size.Y - 50);
 
         return (x, y);
     }
@@ -56,16 +52,16 @@ public abstract class BaseRoomModel
 
     public virtual void Draw()
     {
-        //DrawGround();
+        DrawGround();
 
         Entities.ForEach(x => x.Draw());
     }
 
     private void DrawGround()
     {
-        var ground = new Rectangle(0, 0, Width, Height);
+        var ground = new Rectangle(0, 0, (int)Size.X, (int)Size.Y);
 
-        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, ground, Color.MediumSeaGreen);
+        GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, ground, Color.MediumSeaGreen);
     }
 
     private void VerifyEnemies()
@@ -107,20 +103,19 @@ public abstract class BaseRoomModel
 
     private void LoadWalls()
     {
-        //var tileSize = new WallModel((0, 0)).Size;
+        var tileSize = (int)new WallModel((0, 0)).Size.X;
 
-        //for (int x = 0; x < Width; x += tileSize)
-        //{
-        //    EntitiesToAdd.Add(new WallModel((x, 0)));
-        //    EntitiesToAdd.Add(new WallModel((x, Height - tileSize)));
-        //}
+        for (int x = 0; x < Size.X; x += tileSize)
+        {
+            EntitiesToAdd.Add(new WallModel((x, -tileSize)));
+            EntitiesToAdd.Add(new WallModel((x, (int)Size.Y)));
+        }
 
-        //// Esquerda e direita
-        //for (int y = 0; y < Height; y += tileSize)
-        //{
-        //    EntitiesToAdd.Add(new WallModel((0, y)));
-        //    EntitiesToAdd.Add(new WallModel((Width - tileSize, y)));
-        //}
+        for (int y = 0; y < Size.Y; y += tileSize)
+        {
+            EntitiesToAdd.Add(new WallModel((-tileSize, y)));
+            EntitiesToAdd.Add(new WallModel(((int)Size.X, y)));
+        }
 
         AddObstacles();
     }

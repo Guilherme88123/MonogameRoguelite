@@ -1,17 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application.Interface.Room;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using Teste001.Dto;
-using Teste001.Interface;
-using Teste001.Model.Entities.Creature.Player;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Creature.Player;
+using Application.Interface.Camera;
 
-namespace Teste001;
+namespace MonogameRoguelite;
 
 public class Roguelite : Game
 {
-    private IMapService MapService;
+    private readonly IMapService MapService;
+    private readonly ICameraService CameraService;
 
     public Roguelite()
     {
@@ -27,17 +29,20 @@ public class Roguelite : Game
         GlobalVariables.Graphics = graphics;
 
         MapService = GlobalVariables.GetService<IMapService>();
+        CameraService = GlobalVariables.GetService<ICameraService>();
     }
 
     protected override void LoadContent()
     {
-        var spriteBatch = new SpriteBatch(GraphicsDevice);
+        var spriteBatchEntities = new SpriteBatch(GraphicsDevice);
+        var spriteBatchInterface = new SpriteBatch(GraphicsDevice);
 
         var pixel = new Texture2D(GraphicsDevice, 1, 1);
         pixel.SetData([Color.White]);
 
-        //_font = Content.Load<SpriteFont>("DefaultFont");
-        GlobalVariables.SpriteBatch = spriteBatch;
+        GlobalVariables.Font = Content.Load<SpriteFont>("DefaultFont");
+        GlobalVariables.SpriteBatchEntities = spriteBatchEntities;
+        GlobalVariables.SpriteBatchInterface = spriteBatchInterface;
         GlobalVariables.Pixel = pixel;
     }
 
@@ -45,7 +50,7 @@ public class Roguelite : Game
     {
         var Player = new PlayerModel((GlobalVariables.Graphics.PreferredBackBufferWidth / 2, GlobalVariables.Graphics.PreferredBackBufferHeight / 2));
 
-        MapService.CurrentRoom.Entities.Add(Player);
+        GlobalVariables.CurrentRoom.Entities.Add(Player);
 
         base.Initialize();
     }
@@ -56,21 +61,26 @@ public class Roguelite : Game
         if (teclado.IsKeyDown(Keys.Escape))
             Exit();
 
-        MapService.CurrentRoom.Update(gameTime);
+        GlobalVariables.CurrentRoom.Update(gameTime);
+
+        CameraService.Follow(GlobalVariables.PlayerPosition);
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.MediumSeaGreen);
+        GraphicsDevice.Clear(Color.Black);
 
-        GlobalVariables.SpriteBatch.Begin();
+        GlobalVariables.SpriteBatchEntities.Begin(transformMatrix: CameraService.Transform);
+        GlobalVariables.SpriteBatchInterface.Begin();
 
-        MapService.CurrentRoom.Draw();
+        GlobalVariables.CurrentRoom.Draw();
+
         MapService.DrawMap();
 
-        GlobalVariables.SpriteBatch.End();
+        GlobalVariables.SpriteBatchEntities.End();
+        GlobalVariables.SpriteBatchInterface.End();
 
         base.Draw(gameTime);
     }

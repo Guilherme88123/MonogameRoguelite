@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Teste001.Model.Entities.Drop.Base;
+using MonogameRoguelite.Model.Entities.Drop.Base;
 
-namespace Teste001.Model.Entities.Drop.Coin;
+namespace MonogameRoguelite.Model.Entities.Drop.Coin;
 
 public class CoinModel : BaseDropModel
 {

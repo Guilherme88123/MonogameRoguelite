@@ -2,18 +2,18 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Base;
-using Teste001.Model.Entities.Drop.Coin;
-using Teste001.Model.Entities.Drop.Xp;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Base;
+using MonogameRoguelite.Model.Entities.Drop.Coin;
+using MonogameRoguelite.Model.Entities.Drop.Xp;
 
-namespace Teste001.Model.Entities.Creature.Enemy.Base;
+namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
 public abstract class BaseEnemyModel : BaseCreatureModel
 {
     public Vector2 Target { get; set; }
-    public float CampoVisao { get; set; } = 200f;
+    public float VisionRange { get; set; }
 
     public const float DelayIdle = 1.5f;
     public float DelayIdleAtual { get; set; }
@@ -38,7 +38,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
                 break;
         }
 
-        if (Vector2.Distance(Position, GlobalVariables.PlayerPosition) < CampoVisao)
+        if (Vector2.Distance(Position, GlobalVariables.PlayerPosition) < VisionRange)
         {
             MoveStatus = MoveType.Chase;
         }
@@ -100,7 +100,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
 
         MoveTowards(playerPos, gameTime);
 
-        if (Vector2.Distance(Position, playerPos) > CampoVisao)
+        if (Vector2.Distance(Position, playerPos) > VisionRange)
         {
             DelayIdleAtual = DelayIdle;
             MoveStatus = MoveType.Idle;

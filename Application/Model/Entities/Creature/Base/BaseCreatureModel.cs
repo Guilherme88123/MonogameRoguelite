@@ -1,10 +1,10 @@
 ﻿using Application.Enum;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Base;
 
-namespace Teste001.Model.Entities.Creature.Base;
+namespace MonogameRoguelite.Model.Entities.Creature.Base;
 
 public abstract class BaseCreatureModel : BaseEntityModel
 {
@@ -24,18 +24,6 @@ public abstract class BaseCreatureModel : BaseEntityModel
         {
             Destroy();
         }
-
-        var posX = Position.X;
-        var posY = Position.Y;
-
-        #region Colisão com bordas da tela
-
-        posX = MathHelper.Clamp(Position.X, 0, GlobalVariables.Graphics.PreferredBackBufferWidth - Size.X);
-        posY = MathHelper.Clamp(Position.Y, 0, GlobalVariables.Graphics.PreferredBackBufferHeight - Size.Y);
-
-        #endregion
-
-        Position = new Vector2(posX, posY);
 
         base.Update(gameTime, entities);
     }

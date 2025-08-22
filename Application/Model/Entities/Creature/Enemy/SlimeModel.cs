@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Teste001.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
-namespace Teste001.Model.Entities.Creature.Enemy;
+namespace MonogameRoguelite.Model.Entities.Creature.Enemy;
 
 public class SlimeModel : BaseEnemyModel
 {
@@ -12,5 +12,6 @@ public class SlimeModel : BaseEnemyModel
         Friction = 400f;
         MaxSpeed = 150f;
         Color = Color.DarkGreen;
+        VisionRange = 200f;
     }
 }

@@ -1,10 +1,10 @@
-﻿using Teste001.Model.Room.Base;
+﻿using MonogameRoguelite.Model.Room.Base;
 
-namespace Teste001.Model.Room.Initial;
+namespace MonogameRoguelite.Model.Room.Initial;
 
 public class InitialRoomModel : BaseRoomModel
 {
-    public InitialRoomModel() : base(600, 400)
+    public InitialRoomModel() : base(1500, 1000)
     {
         Finished = true;
     }

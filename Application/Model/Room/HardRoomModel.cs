@@ -1,16 +1,16 @@
 ﻿using Application.Model.Entities.Creature.Enemy;
 using System;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Model.Entities;
-using Teste001.Model.Entities.Creature.Enemy;
-using Teste001.Model.Room.Base;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities;
+using MonogameRoguelite.Model.Entities.Creature.Enemy;
+using MonogameRoguelite.Model.Room.Base;
 
-namespace Teste001.Model.Room;
+namespace MonogameRoguelite.Model.Room;
 
 public class HardRoomModel : BaseRoomModel
 {
-    public HardRoomModel() : base(800, 600)
+    public HardRoomModel() : base(2000, 1500)
     {
         LoadInitialEntities(new Dictionary<int, Type>()
         {

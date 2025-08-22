@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Teste001.Model.Entities.Creature.Enemy.Base;
-using Teste001.Model.Entities.Drop.Coin;
-using Teste001.Model.Entities.Drop.Xp;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities.Drop.Coin;
+using MonogameRoguelite.Model.Entities.Drop.Xp;
 
-namespace Teste001.Model.Entities.Creature.Enemy.Boss;
+namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Boss;
 
 public class KingSlimeModel : BaseEnemyModel
 {
@@ -16,6 +16,7 @@ public class KingSlimeModel : BaseEnemyModel
         Friction = 320f;
         MaxSpeed = 120f;
         Color = Color.DarkRed;
+        VisionRange = 1000f;
     }
 
     protected override Dictionary<Type, int> Drops()

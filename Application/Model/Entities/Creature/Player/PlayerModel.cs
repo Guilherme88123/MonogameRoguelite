@@ -1,15 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Interface.Room;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using Teste001.Dto;
-using Teste001.Interface;
-using Teste001.Model.Entities.Base;
-using Teste001.Model.Entities.Creature.Base;
-using Teste001.Model.Entities.Creature.Enemy.Base;
-using Teste001.Model.Entities.Drop.Coin;
-using Teste001.Model.Entities.Drop.Xp;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Base;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities.Drop.Coin;
+using MonogameRoguelite.Model.Entities.Drop.Xp;
+using Application.Interface.Camera;
 
-namespace Teste001.Model.Entities.Creature.Player;
+namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
 public class PlayerModel : BaseCreatureModel
 {
@@ -82,7 +83,9 @@ public class PlayerModel : BaseCreatureModel
 
         if (mouse.LeftButton == ButtonState.Pressed && DelayTiroAtual <= 0)
         {
-            var direction = new Vector2(mouse.X, mouse.Y) - Position;
+            var camera = GlobalVariables.GetService<ICameraService>();
+            var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
+            var direction = mouseCamera - Position;
             entities.Add(new BulletModel(((int)(Position.X + Size.X / 2), (int)(Position.Y + Size.Y / 2)), direction, this));
             DelayTiroAtual = DelayTiro;
         }
@@ -126,7 +129,7 @@ public class PlayerModel : BaseCreatureModel
         {
             var mapService = GlobalVariables.GetService<IMapService>();
 
-            if (!mapService.CurrentRoom.Finished) return;
+            if (!GlobalVariables.CurrentRoom.Finished) return;
 
             mapService.Move(door.DirectionPosition, this);
         }
@@ -141,15 +144,9 @@ public class PlayerModel : BaseCreatureModel
         DrawBar(0, MaxHealth, Health, Color.Red);
         DrawBar(1, MaxXp, Xp, Color.Purple);
 
-        for (var i = 0; i < Level; i++)
-        {
-            GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(10 + i * 20, 68, 16, 16), Color.White);
-        }
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Level: {Level}", new Vector2(10, 62), Color.White);
 
-        for (var i = 0; i < Coins; i++)
-        {
-            GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(10 + i * 20, 90, 16, 16), Color.Gold);
-        }
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Coins: {Coins}", new Vector2(10, 86), Color.White);
     }
 
     private void DrawBar(int count, int max, int current, Color color)
@@ -159,13 +156,13 @@ public class PlayerModel : BaseCreatureModel
         var x = 10;
         var y = 10 + height * count + 4 * count;
 
-        GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, height), Color.DarkGray);
+        GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, height), Color.DarkGray);
 
         for (var i = 0; i < current; i++)
         {
-            GlobalVariables.SpriteBatch.Draw(GlobalVariables.Pixel, new Rectangle(10 + 4 + i * 16, y + 4, 16, 16), color);
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(10 + 4 + i * 16, y + 4, 16, 16), color);
         }
 
-        //spriteBatch.DrawString(font, $"{current}/{max}", new Vector2(width / 2, y + 4), Color.White);
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"{current}/{max}", new Vector2(width / 2, y + 4), Color.White);
     }
 }
