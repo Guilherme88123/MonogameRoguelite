@@ -8,6 +8,6 @@ public class WallModel : BaseEntityModel
     public WallModel((int x, int y) position) : base(position)
     {
         Size = new Vector2(64, 64);
-        Color = Microsoft.Xna.Framework.Color.Brown;
+        Color = Color.Brown;
     }
 }

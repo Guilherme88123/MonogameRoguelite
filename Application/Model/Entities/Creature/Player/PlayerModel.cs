@@ -30,7 +30,6 @@ public class PlayerModel : BaseCreatureModel
         Acceleration = 1500f;
         Friction = 800f;
         MaxSpeed = 300f;
-        Position = new Vector2(position.x, position.y);
         Color = Color.Blue;
         Direction = new Vector2(1, 1);
         MaxXp = 5;

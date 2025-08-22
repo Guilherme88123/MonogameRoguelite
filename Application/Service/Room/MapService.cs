@@ -47,13 +47,11 @@ public class MapService : IMapService
         int oldX = middle;
         int oldY = middle;
 
-        while (roomsCount < roomsNumber)
+        while (roomsCount <= roomsNumber)
         {
             var (actualX, actualY, direc) = GetNextPosition(oldX, oldY, width);
 
             if (rooms[actualX, actualY] != null) continue;
-
-            roomsCount++;
 
             if (roomsCount == roomsNumber)
             {
@@ -72,9 +70,13 @@ public class MapService : IMapService
                 };
 
                 rooms[actualX, actualY] = newRoom;
+                if (roomsCount == 1) newRoom.Visited = true;
             }
 
+            roomsCount++;
+
             rooms[oldX, oldY].Entities.Add(new DoorModel(direc, rooms[oldX, oldY]));
+            rooms[oldX, oldY].NextRoomPosition = new Vector2(actualX, actualY);
             rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainst(direc), rooms[actualX, actualY]));
             (oldX, oldY) = (actualX, actualY);
         }
@@ -118,31 +120,32 @@ public class MapService : IMapService
         {
             case DirectionType.Right:
                 X += 1;
-                newPosition = new Vector2(20,
-                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size.Y / 2));
+                newPosition = new Vector2(40,
+                    Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Left:
                 X -= 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth - player.Size.X - 20,
-                    GlobalVariables.Graphics.PreferredBackBufferHeight / 2 - (player.Size.Y / 2));
+                newPosition = new Vector2(Rooms[X, Y].Size.X - player.Size.X - 40,
+                    Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Up:
                 Y -= 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size.X / 2),
-                    GlobalVariables.Graphics.PreferredBackBufferHeight - player.Size.Y - 20);
+                newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
+                    Rooms[X, Y].Size.Y - player.Size.Y - 40);
                 break;
             case DirectionType.Down:
                 Y += 1;
-                newPosition = new Vector2(GlobalVariables.Graphics.PreferredBackBufferWidth / 2 - (player.Size.X / 2),
-                    20);
+                newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
+                    40);
                 break;
         }
 
         GlobalVariables.CurrentRoom.Entities.Remove(player);
         GlobalVariables.CurrentRoom = Rooms[X, Y];
-        GlobalVariables.CurrentRoom.Visited = true;
         player.Position = newPosition;
         GlobalVariables.CurrentRoom.Entities.Add(player);
+        GlobalVariables.CurrentRoom.Visited = true;
+        if (GlobalVariables.CurrentRoom.NextRoomPosition != Vector2.Zero) Rooms[(int)GlobalVariables.CurrentRoom.NextRoomPosition.X, (int)GlobalVariables.CurrentRoom.NextRoomPosition.Y].Visited = true;
     }
 
     public void DrawMap()

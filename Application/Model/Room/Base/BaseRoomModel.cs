@@ -11,6 +11,8 @@ namespace MonogameRoguelite.Model.Room.Base;
 
 public abstract class BaseRoomModel
 {
+    public Vector2 NextRoomPosition { get; set; } = Vector2.Zero;
+
     public List<BaseEntityModel> Entities = new();
     public List<BaseEntityModel> EntitiesToAdd = new();
 

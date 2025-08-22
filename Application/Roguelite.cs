@@ -20,6 +20,7 @@ public class Roguelite : Game
         var graphics = new GraphicsDeviceManager(this);
         graphics.PreferredBackBufferWidth = 800;
         graphics.PreferredBackBufferHeight = 600;
+        //graphics.IsFullScreen = true;
         IsFixedTimeStep = true;
         TargetElapsedTime = TimeSpan.FromSeconds(1d / 120d);
         Content.RootDirectory = "Content";
@@ -48,7 +49,8 @@ public class Roguelite : Game
 
     protected override void Initialize()
     {
-        var Player = new PlayerModel((GlobalVariables.Graphics.PreferredBackBufferWidth / 2, GlobalVariables.Graphics.PreferredBackBufferHeight / 2));
+        var Player = new PlayerModel(((int)GlobalVariables.CurrentRoom.Size.X / 2, 
+                                      (int)GlobalVariables.CurrentRoom.Size.Y / 2));
 
         GlobalVariables.CurrentRoom.Entities.Add(Player);
 
