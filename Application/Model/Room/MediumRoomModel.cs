@@ -10,7 +10,7 @@ namespace MonogameRoguelite.Model.Room;
 
 public class MediumRoomModel : BaseRoomModel
 {
-    public MediumRoomModel() : base(1800, 1500)
+    public MediumRoomModel() : base(20 * 64, 15 * 64)
     {
         LoadInitialEntities(new Dictionary<int, Type>()
         {
@@ -21,11 +21,11 @@ public class MediumRoomModel : BaseRoomModel
 
     protected override void AddObstacles()
     {
-        var x = GlobalVariables.Graphics.PreferredBackBufferWidth / 3;
+        var x = Size.X / 4;
+        var y = Size.Y / 5;
+        var tileSize = WallModel.DefaultSize;
 
-        for (var i = 1; i < 6; i++)
-        {
-            Entities.Add(new WallModel((x, GlobalVariables.Graphics.PreferredBackBufferHeight - 64 * i)));
-        }
+        Entities.Add(new WallModel((x, y), (x * 2, tileSize)));
+        Entities.Add(new WallModel((x, y * 3), (x * 2, tileSize)));
     }
 }

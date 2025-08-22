@@ -20,7 +20,7 @@ public abstract class BaseEntityModel
 
     public Rectangle Rectangle => new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
 
-    protected BaseEntityModel((int x, int y) position)
+    protected BaseEntityModel((float x, float y) position)
     {
         Position = new Vector2(position.x, position.y);
     }

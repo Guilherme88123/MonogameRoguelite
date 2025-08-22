@@ -105,25 +105,18 @@ public abstract class BaseRoomModel
 
     private void LoadWalls()
     {
-        var tileSize = (int)new WallModel((0, 0)).Size.X;
+        var tileSize = WallModel.DefaultSize;
 
-        for (int x = 0; x < Size.X; x += tileSize)
-        {
-            EntitiesToAdd.Add(new WallModel((x, -tileSize)));
-            EntitiesToAdd.Add(new WallModel((x, (int)Size.Y)));
-        }
+        EntitiesToAdd.Add(new WallModel((-tileSize, -tileSize), (Size.X + 2 * tileSize, tileSize)));
+        EntitiesToAdd.Add(new WallModel((-tileSize, Size.Y), (Size.X + 2 * tileSize, tileSize)));
 
-        for (int y = 0; y < Size.Y; y += tileSize)
-        {
-            EntitiesToAdd.Add(new WallModel((-tileSize, y)));
-            EntitiesToAdd.Add(new WallModel(((int)Size.X, y)));
-        }
+        EntitiesToAdd.Add(new WallModel((-tileSize, 0), (tileSize, Size.Y)));
+        EntitiesToAdd.Add(new WallModel((Size.X, 0), (tileSize, Size.Y)));
 
         AddObstacles();
     }
 
     protected virtual void AddObstacles()
     {
-
     }
 }
