@@ -1,10 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Model.Entities.Drop.Heart;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities.Drop.Coin;
+using MonogameRoguelite.Model.Entities.Drop.Xp;
+using System;
+using System.Collections.Generic;
 
 namespace Application.Model.Entities.Creature.Enemy;
 
@@ -37,5 +41,14 @@ public class FlyModel : BaseEnemyModel
         }
 
         base.Update(gameTime, entities);
+    }
+
+    protected override Dictionary<Type, int> Drops()
+    {
+        return new()
+        {
+            { typeof(HeartModel), 1 },
+            { typeof(XpNodeModel), 1 },
+        };
     }
 }

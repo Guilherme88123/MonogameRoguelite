@@ -9,6 +9,7 @@ using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 using MonogameRoguelite.Model.Entities.Drop.Coin;
 using MonogameRoguelite.Model.Entities.Drop.Xp;
 using Application.Interface.Camera;
+using Application.Model.Entities.Drop.Heart;
 
 namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
@@ -109,6 +110,13 @@ public class PlayerModel : BaseCreatureModel
         {
             coin.Destroy();
             Coins += coin.Value;
+        }
+
+        if (model is HeartModel hearth)
+        {
+            hearth.Destroy();
+            if (Health < MaxHealth)
+                Health += hearth.Value;
         }
 
         if (model is XpNodeModel xp)
