@@ -7,6 +7,8 @@ using System;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Creature.Player;
 using Application.Interface.Camera;
+using Application.Enum;
+using Application.Interface.Menu;
 
 namespace MonogameRoguelite;
 
@@ -14,12 +16,18 @@ public class Roguelite : Game
 {
     private readonly IMapService MapService;
     private readonly ICameraService CameraService;
+    private readonly IMenuService MenuService;
+
+    private float EscDelay = 0.3f;
+    private float EscDelayAtual = 0f;
+
+    private GameStatusType GameStatus = GameStatusType.Playing;
 
     public Roguelite()
     {
         var graphics = new GraphicsDeviceManager(this);
-        graphics.PreferredBackBufferWidth = 1024;
-        graphics.PreferredBackBufferHeight = 800;
+        graphics.PreferredBackBufferWidth = 800;
+        graphics.PreferredBackBufferHeight = 600;
         //graphics.IsFullScreen = true;
         IsFixedTimeStep = true;
         TargetElapsedTime = TimeSpan.FromSeconds(1d / 120d);
@@ -31,6 +39,7 @@ public class Roguelite : Game
 
         MapService = GlobalVariables.GetService<IMapService>();
         CameraService = GlobalVariables.GetService<ICameraService>();
+        MenuService = GlobalVariables.GetService<IMenuService>();
     }
 
     protected override void LoadContent()
@@ -60,12 +69,23 @@ public class Roguelite : Game
     protected override void Update(GameTime gameTime)
     {
         var teclado = Keyboard.GetState();
-        if (teclado.IsKeyDown(Keys.Escape))
-            Exit();
+        if (teclado.IsKeyDown(Keys.Escape) && EscDelayAtual < 0)
+        {
+            GameStatus = GameStatus == GameStatusType.MainMenu ? GameStatusType.Playing : GameStatusType.MainMenu;
+            EscDelayAtual = EscDelay;
+        }
+            
+        EscDelayAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        GlobalVariables.CurrentRoom.Update(gameTime);
-
-        CameraService.Follow(GlobalVariables.PlayerPosition);
+        if (GameStatus == GameStatusType.Playing)
+        {
+            GlobalVariables.CurrentRoom.Update(gameTime);
+            CameraService.Follow(GlobalVariables.PlayerPosition);
+        }
+        else if (GameStatus == GameStatusType.MainMenu)
+        {
+            MenuService.Update();
+        }
 
         base.Update(gameTime);
     }
@@ -80,6 +100,11 @@ public class Roguelite : Game
         GlobalVariables.CurrentRoom.Draw();
 
         MapService.DrawMap();
+
+        if (GameStatus == GameStatusType.MainMenu)
+        {
+            MenuService.DrawMenu();
+        }
 
         GlobalVariables.SpriteBatchEntities.End();
         GlobalVariables.SpriteBatchInterface.End();

@@ -17,6 +17,7 @@ public static class GlobalVariables
 
     public static Vector2 PlayerPosition = Vector2.Zero;
     public static BaseRoomModel CurrentRoom;
+    public static Game Game;
 
     public static IServiceProvider ServiceProvider { get; set; }
 
