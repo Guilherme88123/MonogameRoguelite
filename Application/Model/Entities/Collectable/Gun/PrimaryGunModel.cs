@@ -10,6 +10,7 @@ public class PrimaryGunModel : BaseGunModel
 {
     public PrimaryGunModel((float x, float y) position) : base(position)
     {
+        Size = new(64, 16);
     }
 
     protected override Dictionary<Type, int> Bullets()

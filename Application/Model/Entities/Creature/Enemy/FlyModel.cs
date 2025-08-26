@@ -3,6 +3,7 @@ using Application.Model.Entities.Collectable.Gun;
 using Application.Model.Entities.Collectable.Gun.Base;
 using Application.Model.Entities.Drop.Heart;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities;
@@ -40,8 +41,7 @@ public class FlyModel : BaseEnemyModel
 
         if (MoveStatus == Enum.MoveType.Chase)
         {
-            var direction = GlobalVariables.Player.Position - Position;
-            Gun.Shoot(entities, direction);
+            Gun.Shoot(entities);
         }
 
         base.Update(gameTime, entities);
@@ -54,5 +54,26 @@ public class FlyModel : BaseEnemyModel
             { typeof(HeartModel), 1 },
             { typeof(XpNodeModel), 1 },
         };
+    }
+
+    public override void Draw()
+    {
+        base.Draw();
+        DrawGun();
+    }
+    private void DrawGun()
+    {
+        var rotation = (float)System.Math.Atan2(TargetDirection.Y, TargetDirection.X);
+
+        GlobalVariables.SpriteBatchEntities.Draw(
+            GlobalVariables.Pixel,
+            CenterPosition,
+            null,
+            Gun.Color,
+            rotation,
+            new Vector2(0.5f, 0.5f),
+            Gun.Size,
+            SpriteEffects.None,
+            0f);
     }
 }

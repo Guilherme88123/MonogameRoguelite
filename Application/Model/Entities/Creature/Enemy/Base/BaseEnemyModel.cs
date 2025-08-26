@@ -78,6 +78,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
     private void HandlePatrol(GameTime gameTime)
     {
         MoveTowards(Target, gameTime);
+        TargetDirection = Target;
 
         if (Vector2.Distance(Position, Target) < 5f)
         {
@@ -110,6 +111,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
     private void MoveTowards(Vector2 target, GameTime gameTime)
     {
         Vector2 direction = target - Position;
+        TargetDirection = direction;
         if (direction.LengthSquared() > 0.01f)
         {
             Move(direction, (float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -123,4 +125,6 @@ public abstract class BaseEnemyModel : BaseCreatureModel
             new Random().Next(50, GlobalVariables.Graphics.PreferredBackBufferHeight - 50)
         );
     }
+
+
 }

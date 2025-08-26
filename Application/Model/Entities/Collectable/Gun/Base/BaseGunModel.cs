@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Base;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ namespace Application.Model.Entities.Collectable.Gun.Base;
 
 public class BaseGunModel : BaseCollectableModel
 {
-    public BaseEntityModel User { get; set; }
+    public BaseCreatureModel User { get; set; }
 
     protected float Delay { get; set; } = 0.35f;
     public float DelayAtual { get; set; }
@@ -20,7 +21,7 @@ public class BaseGunModel : BaseCollectableModel
         Color = Color.Black;
     }
 
-    public void Shoot(List<BaseEntityModel> entities, Vector2 direction)
+    public void Shoot(List<BaseEntityModel> entities)
     {
         if (DelayAtual > 0) return;
 
@@ -30,7 +31,7 @@ public class BaseGunModel : BaseCollectableModel
         {
             for (int i = 0; i < entityType.Value; i++)
             {
-                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User)!;
+                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), User.TargetDirection, User)!;
                 entities.Add(instance);
             }
         }

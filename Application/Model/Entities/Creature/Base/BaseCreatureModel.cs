@@ -11,11 +11,13 @@ public abstract class BaseCreatureModel : BaseEntityModel
     public int MaxHealth { get; set; }
     public int Health { get; set; }
     public MoveType MoveStatus { get; set; } = MoveType.Idle;
+    public Vector2 TargetDirection { get; set; } = new();
 
     public BaseCreatureModel((int x, int y) position, int maxHealth) : base(position)
     {
         MaxHealth = maxHealth;
         Health = MaxHealth;
+        TargetDirection = Direction;
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)

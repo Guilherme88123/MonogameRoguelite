@@ -1,20 +1,21 @@
-﻿using Application.Interface.Room;
+﻿using Application.Interface.Camera;
+using Application.Interface.Room;
+using Application.Model.Entities.Collectable.Base;
+using Application.Model.Entities.Collectable.Gun;
+using Application.Model.Entities.Collectable.Gun.Base;
+using Application.Model.Entities.Collectable.Item.Base;
+using Application.Model.Entities.Drop.Heart;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
 using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
+using MonogameRoguelite.Model.Entities.Drop.Base;
 using MonogameRoguelite.Model.Entities.Drop.Coin;
 using MonogameRoguelite.Model.Entities.Drop.Xp;
-using Application.Interface.Camera;
-using Application.Model.Entities.Drop.Heart;
-using Application.Model.Entities.Collectable.Gun.Base;
-using Application.Model.Entities.Collectable.Base;
-using Application.Model.Entities.Collectable.Item.Base;
-using MonogameRoguelite.Model.Entities.Drop.Base;
-using Application.Model.Entities.Collectable.Gun;
+using System.Collections.Generic;
 
 namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
@@ -31,6 +32,8 @@ public class PlayerModel : BaseCreatureModel
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; } = new((0, 0));
+
+    public List<BaseItemModel> Inventory { get; set; } = new();
 
     public PlayerModel((int x, int y) position) : base(position, maxHealth: 5)
     {
@@ -92,12 +95,13 @@ public class PlayerModel : BaseCreatureModel
 
         #region Mouse Inputs
 
+        var camera = GlobalVariables.GetService<ICameraService>();
+        var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
+        TargetDirection = mouseCamera - Position;
+
         if (mouse.LeftButton == ButtonState.Pressed)
         {
-            var camera = GlobalVariables.GetService<ICameraService>();
-            var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
-            var direction = mouseCamera - Position;
-            EquippedGun.Shoot(entities, direction);
+            EquippedGun.Shoot(entities);
         }
 
         #endregion
@@ -115,9 +119,9 @@ public class PlayerModel : BaseCreatureModel
             {
                 Guns.Add(gun);
             }
-            else if (colec is BaseItemModel)
+            else if (colec is BaseItemModel item)
             {
-                //TODO: Implementar Itens (Inventário, etc)
+                Inventory.Add(item);
             }
 
             colec.Destroy();
@@ -202,8 +206,17 @@ public class PlayerModel : BaseCreatureModel
 
     private void DrawGun()
     {
-        EquippedGun.Position = CenterPosition;
-        EquippedGun.Draw();
-        //TODO: Desenhar a arma apontando para o mouse
+        var rotation = (float)System.Math.Atan2(TargetDirection.Y, TargetDirection.X);
+       
+        GlobalVariables.SpriteBatchEntities.Draw(
+            GlobalVariables.Pixel,
+            CenterPosition,
+            null,
+            EquippedGun.Color,
+            rotation,                            
+            new Vector2(0.5f, 0.5f),                 
+            EquippedGun.Size      ,       
+            SpriteEffects.None,
+            0f);
     }
 }
