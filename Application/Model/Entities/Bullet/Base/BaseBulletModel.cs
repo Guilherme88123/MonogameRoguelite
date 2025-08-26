@@ -1,19 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using MonogameRoguelite.Model.Entities;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
+using System.Collections.Generic;
 
-namespace MonogameRoguelite.Model.Entities;
+namespace Application.Model.Entities.Bullet.Base;
 
-public class BulletModel : BaseEntityModel
+public class BaseBulletModel : BaseEntityModel
 {
     public BaseEntityModel Sender { get; set; }
+    public int Damage { get; set; } = 1;
 
-    public BulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position)
+    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position)
     {
-        Size = new Vector2(16, 16);
-        Speed = new Vector2(650, 650);
-        Color = Color.Yellow;
         Sender = sender;
 
         direction.Normalize();
@@ -33,7 +32,7 @@ public class BulletModel : BaseEntityModel
     {
         if (model is BaseCreatureModel creature && creature != Sender)
         {
-            creature.Health--;
+            creature.Health -= Damage;
             Destroy();
         }
 

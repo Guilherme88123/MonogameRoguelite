@@ -10,6 +10,11 @@ using MonogameRoguelite.Model.Entities.Drop.Coin;
 using MonogameRoguelite.Model.Entities.Drop.Xp;
 using Application.Interface.Camera;
 using Application.Model.Entities.Drop.Heart;
+using Application.Model.Entities.Collectable.Gun.Base;
+using Application.Model.Entities.Collectable.Base;
+using Application.Model.Entities.Collectable.Item.Base;
+using MonogameRoguelite.Model.Entities.Drop.Base;
+using Application.Model.Entities.Collectable.Gun;
 
 namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
@@ -20,11 +25,12 @@ public class PlayerModel : BaseCreatureModel
     public int Xp { get; set; }
     public int Level { get; set; }
 
-    public const float DelayTiro = 0.35f;
-    public float DelayTiroAtual { get; set; }
-
     public const float DelayDano = 1f;
     public float DelayDanoAtual { get; set; }
+
+    public int MaxGuns = 3;
+    public List<BaseGunModel> Guns { get; set; } = new();
+    public BaseGunModel EquippedGun { get; set; } = new((0, 0));
 
     public PlayerModel((int x, int y) position) : base(position, maxHealth: 5)
     {
@@ -36,6 +42,10 @@ public class PlayerModel : BaseCreatureModel
         MaxXp = 5;
         Level = 1;
         Size = new Vector2(48, 64);
+
+        Guns.Add(new PrimaryGunModel((0, 0)));
+        EquippedGun = Guns[0];
+        EquippedGun.User = this;
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -45,9 +55,10 @@ public class PlayerModel : BaseCreatureModel
 
         float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+        EquippedGun.Update(gameTime, entities);
+
         #region Delays
 
-        DelayTiroAtual -= delta;
         DelayDanoAtual -= delta;
 
         #endregion 
@@ -81,13 +92,12 @@ public class PlayerModel : BaseCreatureModel
 
         #region Mouse Inputs
 
-        if (mouse.LeftButton == ButtonState.Pressed && DelayTiroAtual <= 0)
+        if (mouse.LeftButton == ButtonState.Pressed)
         {
             var camera = GlobalVariables.GetService<ICameraService>();
             var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
             var direction = mouseCamera - Position;
-            entities.Add(new BulletModel(((int)(Position.X + Size.X / 2), (int)(Position.Y + Size.Y / 2)), direction, this));
-            DelayTiroAtual = DelayTiro;
+            EquippedGun.Shoot(entities, direction);
         }
 
         #endregion
@@ -99,6 +109,20 @@ public class PlayerModel : BaseCreatureModel
 
     public override void Colision(BaseEntityModel model)
     {
+        if (model is BaseCollectableModel colec)
+        {
+            if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
+            {
+                Guns.Add(gun);
+            }
+            else if (colec is BaseItemModel)
+            {
+                //TODO: Implementar Itens (Inventário, etc)
+            }
+
+            colec.Destroy();
+        }
+
         if (model is BaseEnemyModel enemy && DelayDanoAtual <= 0)
         {
             Health--;
@@ -106,30 +130,32 @@ public class PlayerModel : BaseCreatureModel
             if (Health <= 0) Destroy();
         }
 
-        if (model is CoinModel coin)
+        if (model is BaseDropModel drop)
         {
-            coin.Destroy();
-            Coins += coin.Value;
-        }
-
-        if (model is HeartModel hearth)
-        {
-            hearth.Destroy();
-            if (Health < MaxHealth)
-                Health += hearth.Value;
-        }
-
-        if (model is XpNodeModel xp)
-        {
-            xp.Destroy();
-            Xp += xp.Value;
-
-            if (Xp >= MaxXp)
+            if (model is CoinModel coin)
             {
-                Level++;
-                Xp -= MaxXp;
-                MaxXp = (int)(MaxXp * 1.5);
+                Coins += coin.Value;
             }
+
+            if (model is HeartModel hearth)
+            {
+                if (Health < MaxHealth)
+                    Health += hearth.Value;
+            }
+
+            if (model is XpNodeModel xp)
+            {
+                Xp += xp.Value;
+
+                if (Xp >= MaxXp)
+                {
+                    Level++;
+                    Xp -= MaxXp;
+                    MaxXp = (int)(MaxXp * 1.5);
+                }
+            }
+
+            drop.Destroy();
         }
 
         if (model is DoorModel door)
@@ -147,6 +173,7 @@ public class PlayerModel : BaseCreatureModel
     public override void Draw()
     {
         base.Draw();
+        DrawGun();
 
         DrawBar(0, MaxHealth, Health, Color.Red);
         DrawBar(1, MaxXp, Xp, Color.Purple);
@@ -171,5 +198,12 @@ public class PlayerModel : BaseCreatureModel
         }
 
         GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"{current}/{max}", new Vector2(width / 2, y + 4), Color.White);
+    }
+
+    private void DrawGun()
+    {
+        EquippedGun.Position = CenterPosition;
+        EquippedGun.Draw();
+        //TODO: Desenhar a arma apontando para o mouse
     }
 }

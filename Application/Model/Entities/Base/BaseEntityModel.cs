@@ -11,6 +11,7 @@ public abstract class BaseEntityModel
     public Vector2 Speed { get; set; } = new();
     public Color Color { get; set; } = Color.White;
     public Vector2 Position { get; set; } = new();
+    public Vector2 CenterPosition => new Vector2(Position.X + Size.X / 2, Position.Y + Size.Y / 2);
     public Vector2 Direction { get; set; } = new();
     public float Acceleration { get; set; }
     public float Friction { get; set; }

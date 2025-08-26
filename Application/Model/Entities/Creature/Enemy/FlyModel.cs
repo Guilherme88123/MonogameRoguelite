@@ -1,4 +1,7 @@
-﻿using Application.Model.Entities.Drop.Heart;
+﻿using Application.Model.Entities.Bullet;
+using Application.Model.Entities.Collectable.Gun;
+using Application.Model.Entities.Collectable.Gun.Base;
+using Application.Model.Entities.Drop.Heart;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonogameRoguelite.Dto;
@@ -14,8 +17,7 @@ namespace Application.Model.Entities.Creature.Enemy;
 
 public class FlyModel : BaseEnemyModel
 {
-    public const float DelayTiro = 2f;
-    public float DelayTiroAtual { get; set; } = DelayTiro;
+    public BaseGunModel Gun { get; set; }
 
     public FlyModel((int x, int y) position) : base(position, 3)
     {
@@ -25,19 +27,21 @@ public class FlyModel : BaseEnemyModel
         MaxSpeed = 100f;
         Color = Color.DarkGray;
         VisionRange = 500f;
+
+        Gun = new EnemyGunModel((0, 0));
+        Gun.User = this;
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
     {
         float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        DelayTiroAtual -= delta;
+        Gun.Update(gameTime, entities);
 
-        if (DelayTiroAtual <= 0 && MoveStatus == Enum.MoveType.Chase)
+        if (MoveStatus == Enum.MoveType.Chase)
         {
             var direction = GlobalVariables.Player.Position - Position;
-            entities.Add(new BulletModel(((int)(Position.X + Size.X / 2), (int)(Position.Y + Size.Y / 2)), direction, this));
-            DelayTiroAtual = DelayTiro;
+            Gun.Shoot(entities, direction);
         }
 
         base.Update(gameTime, entities);

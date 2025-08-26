@@ -77,11 +77,11 @@ public class Roguelite : Game
         }
             
         EscDelayAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+        
         if (GameStatus == GameStatusType.Playing)
         {
             GlobalVariables.CurrentRoom.Update(gameTime);
-            CameraService.Follow(GlobalVariables.Player.Position + GlobalVariables.Player.Size / 2);
+            CameraService.Follow(GlobalVariables.Player.CenterPosition);
         }
         else if (GameStatus == GameStatusType.MainMenu)
         {
