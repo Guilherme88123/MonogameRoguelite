@@ -35,7 +35,7 @@ public class FlyModel : BaseEnemyModel
 
         if (DelayTiroAtual <= 0 && MoveStatus == Enum.MoveType.Chase)
         {
-            var direction = GlobalVariables.PlayerPosition - Position;
+            var direction = GlobalVariables.Player.Position - Position;
             entities.Add(new BulletModel(((int)(Position.X + Size.X / 2), (int)(Position.Y + Size.Y / 2)), direction, this));
             DelayTiroAtual = DelayTiro;
         }

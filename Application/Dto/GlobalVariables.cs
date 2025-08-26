@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonogameRoguelite.Model.Entities.Creature.Player;
 using MonogameRoguelite.Model.Room.Base;
 using System;
 
@@ -15,7 +16,7 @@ public static class GlobalVariables
     public static SpriteBatch SpriteBatchEntities;
     public static SpriteBatch SpriteBatchInterface;
 
-    public static Vector2 PlayerPosition = Vector2.Zero;
+    public static PlayerModel Player;
     public static BaseRoomModel CurrentRoom;
     public static Game Game;
 

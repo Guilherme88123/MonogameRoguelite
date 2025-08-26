@@ -70,7 +70,7 @@ public class MenuService : IMenuService
         GlobalVariables.Graphics.PreferredBackBufferWidth = width;
         GlobalVariables.Graphics.PreferredBackBufferHeight = height;
         GlobalVariables.Graphics.ApplyChanges();
-        AtualizarMenu();
+        //AtualizarMenu();
     }
 
     private void AtualizarMenu()

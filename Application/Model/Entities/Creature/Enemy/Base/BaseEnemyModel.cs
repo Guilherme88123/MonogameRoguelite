@@ -38,7 +38,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
                 break;
         }
 
-        if (Vector2.Distance(Position, GlobalVariables.PlayerPosition) < VisionRange)
+        if (Vector2.Distance(Position, GlobalVariables.Player.Position) < VisionRange)
         {
             MoveStatus = MoveType.Chase;
         }
@@ -88,7 +88,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
 
     private void HandleChase(GameTime gameTime)
     {
-        var playerPos = GlobalVariables.PlayerPosition;
+        var playerPos = GlobalVariables.Player.Position;
 
         if (playerPos == Vector2.Zero)
         {

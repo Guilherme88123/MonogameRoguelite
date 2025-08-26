@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using MonogameRoguelite.Dto;
+using MonogameRoguelite.Model.Entities;
+using MonogameRoguelite.Model.Entities.Base;
+using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MonogameRoguelite.Dto;
-using MonogameRoguelite.Model.Entities.Base;
-using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
-using MonogameRoguelite.Model.Entities;
+using System.Reflection.Emit;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MonogameRoguelite.Model.Room.Base;
 
@@ -20,6 +22,8 @@ public abstract class BaseRoomModel
 
     public bool Finished { get; set; } = false;
     public bool Visited { get; set; } = false;
+
+    public float DelayAfterFinish = 2.0f;
 
     protected BaseRoomModel(int width, int height)
     {
@@ -39,7 +43,7 @@ public abstract class BaseRoomModel
 
     public virtual void Update(GameTime gameTime)
     {
-        if (EntitiesToAdd.Count > 0)
+        if (EntitiesToAdd.Any())
         {
             Entities.AddRange(EntitiesToAdd);
             EntitiesToAdd.Clear();
@@ -47,6 +51,7 @@ public abstract class BaseRoomModel
 
         VerifyEnemies();
         VerifyCollision();
+        VerifyDelays(gameTime);
 
         Entities.ForEach(entity => entity.Update(gameTime, EntitiesToAdd));
         Entities.RemoveAll(x => x.IsDestroyed);
@@ -57,6 +62,11 @@ public abstract class BaseRoomModel
         DrawGround();
 
         Entities.ForEach(x => x.Draw());
+
+        if (Finished && DelayAfterFinish > 0.1f)
+        {
+            DrawFinishedMessage();
+        }
     }
 
     private void DrawGround()
@@ -66,11 +76,31 @@ public abstract class BaseRoomModel
         GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, ground, Color.MediumSeaGreen);
     }
 
+    private void DrawFinishedMessage()
+    {
+        var Text = "Room Cleared!";
+        var textSize = GlobalVariables.Font.MeasureString(Text);
+        var textPosition = new Vector2(
+            (GlobalVariables.Graphics.PreferredBackBufferWidth - textSize.X) / 2,
+            (GlobalVariables.Graphics.PreferredBackBufferHeight - textSize.Y) / 2);
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, Text, textPosition, Color.White);
+    }
+
+    protected virtual void VerifyDelays(GameTime gameTime)
+    {
+        if (Finished && DelayAfterFinish > 0)
+            DelayAfterFinish -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+    }
+
     private void VerifyEnemies()
     {
         bool hasEnemies = Entities.Any(x => x is BaseEnemyModel);
 
-        if (!hasEnemies) Finished = true;
+        if (!hasEnemies && !Finished)
+        {
+            Finished = true;
+            HasFinished();
+        }
     }
 
     private void VerifyCollision()
@@ -117,6 +147,10 @@ public abstract class BaseRoomModel
     }
 
     protected virtual void AddObstacles()
+    {
+    }
+
+    protected virtual void HasFinished()
     {
     }
 }

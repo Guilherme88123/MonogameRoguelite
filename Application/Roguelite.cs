@@ -61,6 +61,7 @@ public class Roguelite : Game
         var Player = new PlayerModel(((int)GlobalVariables.CurrentRoom.Size.X / 2, 
                                       (int)GlobalVariables.CurrentRoom.Size.Y / 2));
 
+        GlobalVariables.Player = Player;
         GlobalVariables.CurrentRoom.Entities.Add(Player);
 
         base.Initialize();
@@ -80,7 +81,7 @@ public class Roguelite : Game
         if (GameStatus == GameStatusType.Playing)
         {
             GlobalVariables.CurrentRoom.Update(gameTime);
-            CameraService.Follow(GlobalVariables.PlayerPosition);
+            CameraService.Follow(GlobalVariables.Player.Position + GlobalVariables.Player.Size / 2);
         }
         else if (GameStatus == GameStatusType.MainMenu)
         {

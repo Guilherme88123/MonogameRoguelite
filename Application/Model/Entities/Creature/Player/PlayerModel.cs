@@ -94,7 +94,7 @@ public class PlayerModel : BaseCreatureModel
 
         base.Update(gameTime, entities);
 
-        GlobalVariables.PlayerPosition = new Vector2(Position.X, Position.Y);
+        GlobalVariables.Player.Position = new Vector2(Position.X, Position.Y);
     }
 
     public override void Colision(BaseEntityModel model)
