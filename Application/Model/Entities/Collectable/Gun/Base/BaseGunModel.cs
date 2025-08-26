@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Application.Model.Entities.Collectable.Gun.Base;
 
-public class BaseGunModel : BaseCollectableModel
+public abstract class BaseGunModel : BaseCollectableModel
 {
     public BaseCreatureModel User { get; set; }
 
@@ -46,7 +46,9 @@ public class BaseGunModel : BaseCollectableModel
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
     {
-        DelayAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        DelayAtual -= delta;
 
         base.Update(gameTime, entities);
     }

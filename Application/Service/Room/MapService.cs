@@ -9,6 +9,8 @@ using MonogameRoguelite.Model.Room;
 using MonogameRoguelite.Model.Room.Base;
 using MonogameRoguelite.Model.Room.Boss;
 using MonogameRoguelite.Model.Room.Initial;
+using Application.Model.Entities;
+using Application.Model.Room;
 
 namespace MonogameRoguelite.Service.Room;
 
@@ -59,15 +61,7 @@ public class MapService : IMapService
             }
             else
             {
-                var difficulty = Random.Next(3);
-
-                BaseRoomModel newRoom = difficulty switch
-                {
-                    0 => new EasyRoomModel(),
-                    1 => new MediumRoomModel(),
-                    2 => new HardRoomModel(),
-                    _ => new EasyRoomModel()
-                };
+                BaseRoomModel newRoom = GetRandomRoom();
 
                 rooms[actualX, actualY] = newRoom;
                 if (roomsCount == 1) newRoom.Visited = true;
@@ -178,11 +172,26 @@ public class MapService : IMapService
         return room switch
         {
             _ when room == GlobalVariables.CurrentRoom => Color.White,
-            InitialRoomModel => Color.Blue,
-            _ when room.Finished => Color.Green,
             _ when !room.Visited => Color.Transparent,
+            InitialRoomModel => Color.Blue,
             BossRoomModel => Color.Red,
+            ChestRoomModel => Color.Gold,
+            _ when room.Finished => Color.Green,
             _ => Color.Gray,
+        };
+    }
+
+    private BaseRoomModel GetRandomRoom()
+    {
+        var x = Random.Next(11);
+
+        return x switch
+        {
+            _ when 0 >= x && x <= 3 => new EasyRoomModel(),
+            _ when 4 >= x && x <= 6 => new MediumRoomModel(),
+            _ when 7 >= x && x <= 9 => new HardRoomModel(),
+            _ when x == 10 => new ChestRoomModel(),
+            _ => new EasyRoomModel()
         };
     }
 }

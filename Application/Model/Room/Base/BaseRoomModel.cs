@@ -23,7 +23,7 @@ public abstract class BaseRoomModel
     public bool Finished { get; set; } = false;
     public bool Visited { get; set; } = false;
 
-    public float DelayAfterFinish = 2.0f;
+    public float DelayAfterFinish { get; set; } = 2.0f;
 
     protected BaseRoomModel(int width, int height)
     {
@@ -32,7 +32,7 @@ public abstract class BaseRoomModel
         LoadWalls();
     }
 
-    protected (int, int) GetRandomPosition()
+    protected (float, float) GetRandomPosition()
     {
         var random = new Random();
         var x = random.Next(50, (int)Size.X - 50);

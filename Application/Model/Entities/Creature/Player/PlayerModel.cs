@@ -31,7 +31,7 @@ public class PlayerModel : BaseCreatureModel
 
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
-    public BaseGunModel EquippedGun { get; set; } = new((0, 0));
+    public BaseGunModel EquippedGun { get; set; }
 
     public List<BaseItemModel> Inventory { get; set; } = new();
 
@@ -113,7 +113,7 @@ public class PlayerModel : BaseCreatureModel
 
     public override void Colision(BaseEntityModel model)
     {
-        if (model is BaseCollectableModel colec)
+        if (model is BaseCollectableModel colec && colec.Speed == Vector2.Zero)
         {
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {

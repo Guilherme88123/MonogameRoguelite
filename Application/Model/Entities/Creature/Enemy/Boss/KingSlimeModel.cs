@@ -9,7 +9,7 @@ namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Boss;
 
 public class KingSlimeModel : BaseEnemyModel
 {
-    public KingSlimeModel((int x, int y) position) : base(position, 30)
+    public KingSlimeModel((float x, float y) position) : base(position, 30)
     {
         Size = new Vector2(128, 128);
         Acceleration = 600f;

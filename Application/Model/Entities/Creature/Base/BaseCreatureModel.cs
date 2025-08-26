@@ -13,7 +13,7 @@ public abstract class BaseCreatureModel : BaseEntityModel
     public MoveType MoveStatus { get; set; } = MoveType.Idle;
     public Vector2 TargetDirection { get; set; } = new();
 
-    public BaseCreatureModel((int x, int y) position, int maxHealth) : base(position)
+    public BaseCreatureModel((float x, float y) position, int maxHealth) : base(position)
     {
         MaxHealth = maxHealth;
         Health = MaxHealth;
