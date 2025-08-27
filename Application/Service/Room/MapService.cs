@@ -9,7 +9,6 @@ using MonogameRoguelite.Model.Room;
 using MonogameRoguelite.Model.Room.Base;
 using MonogameRoguelite.Model.Room.Boss;
 using MonogameRoguelite.Model.Room.Initial;
-using Application.Model.Entities;
 using Application.Model.Room;
 
 namespace MonogameRoguelite.Service.Room;
@@ -30,9 +29,9 @@ public class MapService : IMapService
         (0, -1, DirectionType.Up)
     };
 
-    public MapService()
+    public void GenerateMap(int size)
     {
-        Rooms = GenerateRooms(5);//Pegar de opções
+        Rooms = GenerateRooms(size);
     }
 
     public BaseRoomModel[,] GenerateRooms(int width)

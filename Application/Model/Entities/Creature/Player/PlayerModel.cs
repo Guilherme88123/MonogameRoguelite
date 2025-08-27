@@ -1,5 +1,6 @@
 ﻿using Application.Interface.Camera;
 using Application.Interface.Room;
+using Application.Model.Entities;
 using Application.Model.Entities.Collectable.Base;
 using Application.Model.Entities.Collectable.Gun;
 using Application.Model.Entities.Collectable.Gun.Base;
@@ -194,6 +195,17 @@ public class PlayerModel : BaseCreatureModel
             if (!GlobalVariables.CurrentRoom.Finished) return;
 
             mapService.Move(door.DirectionPosition, this);
+        }
+
+        if (model is PortalModel portal)
+        {
+            var mapService = GlobalVariables.GetService<IMapService>();
+
+            mapService.GenerateMap(5);
+
+            GlobalVariables.CurrentRoom.Entities.Add(this);
+
+            Position = new((int)GlobalVariables.CurrentRoom.Size.X / 2, (int)GlobalVariables.CurrentRoom.Size.Y / 2);
         }
 
         base.Colision(model);

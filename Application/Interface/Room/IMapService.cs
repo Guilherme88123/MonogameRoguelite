@@ -7,4 +7,5 @@ public interface IMapService
 {
     public void Move(DirectionType direction, PlayerModel player);
     public void DrawMap();
+    public void GenerateMap(int size);
 }

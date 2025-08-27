@@ -1,4 +1,5 @@
-﻿using MonogameRoguelite.Model.Entities;
+﻿using Application.Model.Entities;
+using MonogameRoguelite.Model.Entities;
 using MonogameRoguelite.Model.Entities.Creature.Enemy.Boss;
 using MonogameRoguelite.Model.Room.Base;
 using System;
@@ -26,5 +27,14 @@ public class BossRoomModel : BaseRoomModel
         Entities.Add(new WallModel((Size.X - x - tileSize * 2, y), (tileSize * 2, tileSize * 2)));
         Entities.Add(new WallModel((x, Size.Y - y - tileSize * 2), (tileSize * 2, tileSize * 2)));
         Entities.Add(new WallModel((Size.X - x - tileSize * 2, Size.Y - y - tileSize * 2), (tileSize * 2, tileSize * 2)));
+    }
+
+    protected override void HasFinished()
+    {
+        var portal = new PortalModel((0, 0));
+        portal.Position = new((Size.X - portal.Size.X) / 2, (Size.Y - portal.Size.Y) / 2);
+        EntitiesToAdd.Add(portal);
+        
+        base.HasFinished();
     }
 }
