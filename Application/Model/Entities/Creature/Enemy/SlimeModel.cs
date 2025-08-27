@@ -5,7 +5,7 @@ namespace MonogameRoguelite.Model.Entities.Creature.Enemy;
 
 public class SlimeModel : BaseEnemyModel
 {
-    public SlimeModel((int x, int y) position) : base(position, 5)
+    public SlimeModel((float x, float y) position) : base(position, 5)
     {
         Size = new Vector2(48, 48);
         Acceleration = 750f;

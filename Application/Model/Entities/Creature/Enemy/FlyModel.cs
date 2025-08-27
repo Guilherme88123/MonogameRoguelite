@@ -20,7 +20,7 @@ public class FlyModel : BaseEnemyModel
 {
     public BaseGunModel Gun { get; set; }
 
-    public FlyModel((int x, int y) position) : base(position, 3)
+    public FlyModel((float x, float y) position) : base(position, 3)
     {
         Size = new Vector2(32, 32);
         Acceleration = 500f;

@@ -29,11 +29,15 @@ public class PlayerModel : BaseCreatureModel
     public const float DelayDano = 1f;
     public float DelayDanoAtual { get; set; }
 
+    public const float DelayInv = 0.3f;
+    public float DelayInvAtual { get; set; }
+
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
 
     public List<BaseItemModel> Inventory { get; set; } = new();
+    private bool IsInvOpen = false;
 
     public PlayerModel((int x, int y) position) : base(position, maxHealth: 5)
     {
@@ -63,6 +67,7 @@ public class PlayerModel : BaseCreatureModel
         #region Delays
 
         DelayDanoAtual -= delta;
+        DelayInvAtual -= delta;
 
         #endregion 
 
@@ -104,6 +109,12 @@ public class PlayerModel : BaseCreatureModel
             EquippedGun.Shoot(entities);
         }
 
+        if (teclado.IsKeyDown(Keys.E) && DelayInvAtual < 0)
+        {
+            IsInvOpen = !IsInvOpen;
+            DelayInvAtual = DelayInv;
+        }
+
         #endregion
 
         base.Update(gameTime, entities);
@@ -118,13 +129,13 @@ public class PlayerModel : BaseCreatureModel
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {
                 Guns.Add(gun);
+                gun.Destroy();
             }
             else if (colec is BaseItemModel item)
             {
                 Inventory.Add(item);
+                item.Destroy();
             }
-
-            colec.Destroy();
         }
 
         if (model is BaseEnemyModel enemy && DelayDanoAtual <= 0)
@@ -185,6 +196,8 @@ public class PlayerModel : BaseCreatureModel
         GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Level: {Level}", new Vector2(10, 62), Color.White);
 
         GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Coins: {Coins}", new Vector2(10, 86), Color.White);
+
+        if (IsInvOpen) DrawInventory();
     }
 
     private void DrawBar(int count, int max, int current, Color color)
@@ -218,5 +231,47 @@ public class PlayerModel : BaseCreatureModel
             EquippedGun.Size      ,       
             SpriteEffects.None,
             0f);
+    }
+
+    private void DrawInventory()
+    {
+        var menuColor = Color.DarkGray * 0.9f;
+
+        var width = (int)(GlobalVariables.Graphics.PreferredBackBufferWidth / 1.2);
+        var height = (int)(GlobalVariables.Graphics.PreferredBackBufferHeight / 1.5);
+        var x = (GlobalVariables.Graphics.PreferredBackBufferWidth / 2) - (width / 2);
+        var y = 10;
+        GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, height), menuColor);
+
+        for (var i = 0; i < Inventory.Count; i++)
+        {
+            var item = Inventory[i];
+            var itemX = x + 20 + (i % 5) * 70;
+            var itemY = y + 20 + (i / 5) * 70;
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(itemX, itemY, 64, 64), item.Color);
+        }
+
+        var gunInvWidth = width / 3 - 10;
+        var gunInvHeight = height / 3 - 10;
+        var gunInvY = y + height + 10;
+
+        for (var i = 0; i < MaxGuns; i++)
+        {
+            var gunInvX = x + i * (gunInvWidth + 15);
+
+            var gunInvRect = new Rectangle(gunInvX, gunInvY, gunInvWidth, gunInvHeight);
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRect, menuColor);
+
+            if (i < Guns.Count)
+            {
+                var gun = Guns[i];
+                var gunWidth = (int)gun.Size.X * 2;
+                var gunHeight = (int)gun.Size.Y * 2;
+                var gunX = gunInvX + gunInvWidth / 2 - gunWidth / 2;
+                var gunY = gunInvY + gunInvHeight / 2 - gunHeight / 2;
+
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(gunX, gunY, gunWidth, gunHeight), gun.Color);
+            }
+        }
     }
 }

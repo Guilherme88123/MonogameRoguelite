@@ -45,6 +45,7 @@ public class MapService : IMapService
         rooms[middle, middle] = new InitialRoomModel();
         X = Y = middle;
         GlobalVariables.CurrentRoom = rooms[middle, middle];
+        GlobalVariables.CurrentRoom.Visited = true;
 
         int oldX = middle;
         int oldY = middle;
