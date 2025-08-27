@@ -32,6 +32,9 @@ public class PlayerModel : BaseCreatureModel
     public const float DelayInv = 0.3f;
     public float DelayInvAtual { get; set; }
 
+    public const float DelayChangeGun = 0.3f;
+    public float DelayChangeGunAtual { get; set; }
+
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
@@ -51,6 +54,8 @@ public class PlayerModel : BaseCreatureModel
         Size = new Vector2(48, 64);
 
         Guns.Add(new PrimaryGunModel((0, 0)));
+        Guns.Add(new EnemyGunModel((0, 0)));
+        Guns[1].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
     }
@@ -68,6 +73,7 @@ public class PlayerModel : BaseCreatureModel
 
         DelayDanoAtual -= delta;
         DelayInvAtual -= delta;
+        DelayChangeGunAtual -= delta;
 
         #endregion 
 
@@ -98,7 +104,7 @@ public class PlayerModel : BaseCreatureModel
 
         #endregion
 
-        #region Mouse Inputs
+        #region Other Inputs
 
         var camera = GlobalVariables.GetService<ICameraService>();
         var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
@@ -115,6 +121,13 @@ public class PlayerModel : BaseCreatureModel
             DelayInvAtual = DelayInv;
         }
 
+        if (teclado.IsKeyDown(Keys.F) && DelayChangeGunAtual < 0)
+        {
+            var idx = Guns.IndexOf(EquippedGun);
+            EquippedGun = Guns[(idx + 1) % Guns.Count];
+            DelayChangeGunAtual = DelayChangeGun;
+        }
+
         #endregion
 
         base.Update(gameTime, entities);
@@ -129,6 +142,7 @@ public class PlayerModel : BaseCreatureModel
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {
                 Guns.Add(gun);
+                gun.User = this;
                 gun.Destroy();
             }
             else if (colec is BaseItemModel item)
