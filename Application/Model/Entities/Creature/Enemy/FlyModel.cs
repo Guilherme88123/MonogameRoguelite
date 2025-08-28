@@ -41,7 +41,7 @@ public class FlyModel : BaseEnemyModel
 
         if (MoveStatus == Enum.MoveType.Chase)
         {
-            Gun.Shoot(entities);
+            Gun.Shoot();
         }
 
         base.Update(gameTime, entities);

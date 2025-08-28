@@ -120,7 +120,7 @@ public class PlayerModel : BaseCreatureModel
 
         if (mouse.LeftButton == ButtonState.Pressed && EquippedGun != null)
         {
-            EquippedGun.Shoot(entities);
+            EquippedGun.Shoot();
         }
 
         if (teclado.IsKeyDown(Keys.E) && DelayInvAtual < 0)

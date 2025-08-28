@@ -1,4 +1,5 @@
-﻿using Application.Model.Entities.Collectable.Base;
+﻿using Application.Infrastructure;
+using Application.Model.Entities.Collectable.Base;
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
@@ -21,23 +22,46 @@ public abstract class BaseGunModel : BaseCollectableModel
         Color = Color.Black;
     }
 
-    public void Shoot(List<BaseEntityModel> entities)
+    public void Shoot()
     {
         if (DelayAtual > 0) return;
 
-        var drops = Bullets();
+        var bullets = Bullets();
 
-        foreach (var entityType in drops)
+        foreach (var entityType in bullets)
         {
-            for (int i = 0; i < entityType.Value; i++)
+            if (entityType.Value == 1)
             {
-                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), User.TargetDirection, User)!;
-                instance.Position -= new Vector2(instance.Size.X / 2, instance.Size.Y / 2);
-                entities.Add(instance);
+                CreateBullet(entityType.Key);
+            }
+            else
+            {
+                for (int i = 0; i < entityType.Value; i++)
+                {
+                    float spread = MathHelper.ToRadians(10f);
+
+                    float randomAngle = (float)(new Random().NextDouble() * 2 - 1) * spread;
+
+                    Vector2 bulletDir = VectorHelper.Rotate(User.TargetDirection, randomAngle);
+
+                    CreateBullet(entityType.Key, bulletDir);
+                }
             }
         }
 
         DelayAtual = Delay;
+    }
+
+    private void CreateBullet(Type type)
+    {
+        CreateBullet(type, User.TargetDirection);
+    }
+
+    private void CreateBullet(Type type, Vector2 direction)
+    {
+        var instance = (BaseEntityModel)Activator.CreateInstance(type, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User)!;
+        instance.Position -= new Vector2(instance.Size.X / 2, instance.Size.Y / 2);
+        GlobalVariables.CurrentRoom.EntitiesToAdd.Add(instance);
     }
 
     protected virtual Dictionary<Type, int> Bullets()
