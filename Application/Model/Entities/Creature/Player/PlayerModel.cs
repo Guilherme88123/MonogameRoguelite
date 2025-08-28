@@ -1,4 +1,5 @@
-﻿using Application.Interface.Camera;
+﻿using Application.Infrastructure;
+using Application.Interface.Camera;
 using Application.Interface.Room;
 using Application.Model.Entities;
 using Application.Model.Entities.Collectable.Base;
@@ -54,7 +55,7 @@ public class PlayerModel : BaseCreatureModel
         Level = 1;
         Size = new Vector2(48, 64);
 
-        Guns.Add(new PrimaryGunModel((0, 0)));
+        Guns.Add(new PistolModel((0, 0)));
         Guns.Add(new EnemyGunModel((0, 0)));
         Guns[1].User = this;
         EquippedGun = Guns[0];
@@ -291,6 +292,10 @@ public class PlayerModel : BaseCreatureModel
             if (i < Guns.Count)
             {
                 var gun = Guns[i];
+
+                var gunInvRarityRect = new Rectangle(gunInvX + 10, gunInvY + 10, gunInvWidth - 20, gunInvHeight - 20);
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Rarity) * 0.9f);
+
                 var gunWidth = (int)gun.Size.X * 2;
                 var gunHeight = (int)gun.Size.Y * 2;
                 var gunX = gunInvX + gunInvWidth / 2 - gunWidth / 2;

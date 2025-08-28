@@ -1,4 +1,5 @@
 ﻿using Application.Enum;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -42,5 +43,19 @@ public static class RngHelper
     public static double GetChance(RarityType rarity)
     {
         return RarityChances.TryGetValue(rarity, out var chance) ? chance : 0.0;
+    }
+
+    public static Color GetRarityColor(RarityType rarity)
+    {
+        return rarity switch
+        {
+            RarityType.Common => new Color(255, 255, 255),
+            RarityType.Uncommon => new Color(0, 255, 0),
+            RarityType.Rare => new Color(0, 0, 255),
+            RarityType.Epic => new Color(215, 40, 255),
+            RarityType.Legendary => new Color(255, 215, 40),
+            RarityType.Mythic => new Color(255, 0, 0),
+            RarityType.Secret => new Color(0, 0, 0),
+        };
     }
 }

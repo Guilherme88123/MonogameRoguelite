@@ -9,7 +9,7 @@ public class PrimaryBulletModel : BaseBulletModel
     public PrimaryBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position, direction, sender)
     {
         Size = new Vector2(16, 16);
-        Speed = new Vector2(650, 650);
+        Speed = new Vector2(550, 550);
         Color = Color.Yellow;
     }
 }

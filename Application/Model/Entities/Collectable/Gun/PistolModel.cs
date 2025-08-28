@@ -1,16 +1,17 @@
 ﻿using Application.Model.Entities.Bullet;
 using Application.Model.Entities.Collectable.Gun.Base;
-using MonogameRoguelite.Model.Entities.Base;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace Application.Model.Entities.Collectable.Gun;
 
-public class PrimaryGunModel : BaseGunModel
+public class PistolModel : BaseGunModel
 {
-    public PrimaryGunModel((float x, float y) position) : base(position)
+    public PistolModel((float x, float y) position) : base(position)
     {
-        Size = new(64, 16);
+        Size = new(32, 8);
+        Color = Color.Black;
     }
 
     protected override Dictionary<Type, int> Bullets()

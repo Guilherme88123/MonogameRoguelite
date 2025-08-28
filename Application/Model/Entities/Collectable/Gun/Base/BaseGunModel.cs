@@ -12,7 +12,7 @@ public abstract class BaseGunModel : BaseCollectableModel
 {
     public BaseCreatureModel User { get; set; }
 
-    protected float Delay { get; set; } = 0.35f;
+    protected float Delay { get; set; } = 0.5f;
     public float DelayAtual { get; set; }
 
     public BaseGunModel((float x, float y) position) : base(position)
