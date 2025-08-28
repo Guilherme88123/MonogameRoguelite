@@ -37,6 +37,9 @@ public class PlayerModel : BaseCreatureModel
     public const float DelayChangeGun = 0.3f;
     public float DelayChangeGunAtual { get; set; }
 
+    public const float DelayDropGun = 0.3f;
+    public float DelayDropGunAtual { get; set; }
+
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
@@ -56,8 +59,10 @@ public class PlayerModel : BaseCreatureModel
         Size = new Vector2(48, 64);
 
         Guns.Add(new PistolModel((0, 0)));
-        Guns.Add(new EnemyGunModel((0, 0)));
+        Guns.Add(new SniperModel((0, 0)));
+        Guns.Add(new ShotgunModel((0, 0)));
         Guns[1].User = this;
+        Guns[2].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
     }
@@ -69,13 +74,14 @@ public class PlayerModel : BaseCreatureModel
 
         float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        EquippedGun.Update(gameTime, entities);
+        if (EquippedGun != null) EquippedGun.Update(gameTime, entities);
 
         #region Delays
 
         DelayDanoAtual -= delta;
         DelayInvAtual -= delta;
         DelayChangeGunAtual -= delta;
+        DelayDropGunAtual -= delta;
 
         #endregion 
 
@@ -112,7 +118,7 @@ public class PlayerModel : BaseCreatureModel
         var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
         TargetDirection = mouseCamera - Position;
 
-        if (mouse.LeftButton == ButtonState.Pressed)
+        if (mouse.LeftButton == ButtonState.Pressed && EquippedGun != null)
         {
             EquippedGun.Shoot(entities);
         }
@@ -125,27 +131,54 @@ public class PlayerModel : BaseCreatureModel
 
         if (teclado.IsKeyDown(Keys.F) && DelayChangeGunAtual < 0)
         {
-            var idx = Guns.IndexOf(EquippedGun);
-            EquippedGun = Guns[(idx + 1) % Guns.Count];
+            ChangeGun();
             DelayChangeGunAtual = DelayChangeGun;
+        }
+
+        if (teclado.IsKeyDown(Keys.Q) && DelayDropGunAtual < 0 && EquippedGun != null)
+        {
+            var gunToDrop = EquippedGun;
+
+            gunToDrop.IsDestroyed = false;
+            gunToDrop.User = null;
+            gunToDrop.Position = CenterPosition - gunToDrop.Size / 2;
+            gunToDrop.Speed += new Vector2(1, 1);
+            gunToDrop.Direction = TargetDirection;
+
+            if (Guns.Count == 1)
+                EquippedGun = null;
+            else
+                ChangeGun();
+
+            Guns.Remove(gunToDrop);
+            entities.Add(gunToDrop);
+
+            DelayDropGunAtual = DelayDropGun;
         }
 
         #endregion
 
         base.Update(gameTime, entities);
+    }
 
-        GlobalVariables.Player.Position = new Vector2(Position.X, Position.Y);
+    private void ChangeGun()
+    {
+        if (Guns.Count <= 1) return;
+        var idx = Guns.IndexOf(EquippedGun);
+        EquippedGun = Guns[(idx + 1) % Guns.Count];
     }
 
     public override void Colision(BaseEntityModel model)
     {
-        if (model is BaseCollectableModel colec && colec.Speed == Vector2.Zero)
+        if (model is BaseCollectableModel colec && colec.Speed.LengthSquared() < 0.1f)
         {
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {
                 Guns.Add(gun);
                 gun.User = this;
                 gun.Destroy();
+
+                if (EquippedGun == null) EquippedGun = gun;
             }
             else if (colec is BaseItemModel item)
             {
@@ -215,7 +248,7 @@ public class PlayerModel : BaseCreatureModel
     public override void Draw()
     {
         base.Draw();
-        DrawGun();
+        if (EquippedGun != null) DrawGun();
 
         DrawBar(0, MaxHealth, Health, Color.Red);
         DrawBar(1, MaxXp, Xp, Color.Purple);
@@ -294,7 +327,7 @@ public class PlayerModel : BaseCreatureModel
                 var gun = Guns[i];
 
                 var gunInvRarityRect = new Rectangle(gunInvX + 10, gunInvY + 10, gunInvWidth - 20, gunInvHeight - 20);
-                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Rarity) * 0.9f);
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Rarity) * 0.8f);
 
                 var gunWidth = (int)gun.Size.X * 2;
                 var gunHeight = (int)gun.Size.Y * 2;

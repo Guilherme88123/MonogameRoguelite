@@ -32,6 +32,7 @@ public abstract class BaseGunModel : BaseCollectableModel
             for (int i = 0; i < entityType.Value; i++)
             {
                 var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), User.TargetDirection, User)!;
+                instance.Position -= new Vector2(instance.Size.X / 2, instance.Size.Y / 2);
                 entities.Add(instance);
             }
         }
@@ -49,6 +50,8 @@ public abstract class BaseGunModel : BaseCollectableModel
         var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         DelayAtual -= delta;
+
+        Direction.Normalize();
 
         base.Update(gameTime, entities);
     }

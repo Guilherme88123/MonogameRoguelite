@@ -17,7 +17,6 @@ public class CollectableFactory
 
     public static BaseCollectableModel GetRandomCollectable(RarityType rarity)
     {
-        rarity = RarityType.Common;
         var rarityCollectables = Collectables.Where(c => c.Rarity == rarity).ToList();
 
         var idx = Random.Shared.Next(0, rarityCollectables.Count);
