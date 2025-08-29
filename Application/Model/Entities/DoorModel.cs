@@ -18,6 +18,7 @@ public class DoorModel : BaseEntityModel
         Size = new Vector2(96, 96);
         RoomSize = room.Size;
         Position = GetPosition();
+        IsCollidable = false;
     }
 
     private Vector2 GetPosition()

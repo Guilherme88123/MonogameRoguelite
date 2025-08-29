@@ -11,7 +11,7 @@ public class BazookaModel : BaseGunModel
     public BazookaModel((float x, float y) position) : base(position)
     {
         Size = new(96, 16);
-        Delay = 3f;
+        Delay = 2.3f;
         Color = Microsoft.Xna.Framework.Color.OrangeRed;
         Rarity = RarityType.Secret;
     }
@@ -20,7 +20,7 @@ public class BazookaModel : BaseGunModel
     {
         return new()
         {
-            { typeof(PrimaryBulletModel), 1 },
+            { typeof(BazookaBulletModel), 1 },
         };
     }
 }

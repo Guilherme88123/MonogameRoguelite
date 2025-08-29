@@ -10,13 +10,19 @@ public class BaseBulletModel : BaseEntityModel
 {
     public BaseEntityModel Sender { get; set; }
     public int Damage { get; set; } = 1;
+    //public float GunDamageFactor { get; set; } = 1f;
+    public float GunSpeedFactor { get; set; } = 1f;
 
-    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position)
+    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor) : base(position)
     {
         Sender = sender;
 
         direction.Normalize();
         Direction = direction;
+    }
+
+    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : this(position, direction, sender, 1f)
+    {
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -36,7 +42,7 @@ public class BaseBulletModel : BaseEntityModel
             Destroy();
         }
 
-        if (model is WallModel wall)
+        if (model is WallModel wall && IsCollidable)
         {
             Destroy();
         }

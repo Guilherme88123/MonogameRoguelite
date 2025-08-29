@@ -14,6 +14,7 @@ public class MachineGunModel : BaseGunModel
         Delay = 0.1f;
         Color = Microsoft.Xna.Framework.Color.Gray;
         Rarity = RarityType.Legendary;
+        BulletSpeedFactor = 0.8f;
     }
 
     protected override Dictionary<Type, int> Bullets()

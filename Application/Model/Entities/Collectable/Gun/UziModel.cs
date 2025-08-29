@@ -14,6 +14,7 @@ public class UziModel : BaseGunModel
         Delay = 0.2f;
         Color = Microsoft.Xna.Framework.Color.DarkBlue;
         Rarity = RarityType.Rare;
+        BulletSpeedFactor = 0.6f;
     }
 
     protected override Dictionary<Type, int> Bullets()

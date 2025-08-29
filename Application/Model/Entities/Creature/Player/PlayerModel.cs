@@ -60,7 +60,7 @@ public class PlayerModel : BaseCreatureModel
 
         Guns.Add(new PistolModel((0, 0)));
         Guns.Add(new SniperModel((0, 0)));
-        Guns.Add(new ShotgunModel((0, 0)));
+        Guns.Add(new BazookaModel((0, 0)));
         Guns[1].User = this;
         Guns[2].User = this;
         EquippedGun = Guns[0];

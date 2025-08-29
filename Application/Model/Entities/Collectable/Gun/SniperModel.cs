@@ -11,7 +11,7 @@ public class SniperModel : BaseGunModel
     public SniperModel((float x, float y) position) : base(position)
     {
         Size = new(96, 12);
-        Delay = 2f;
+        Delay = 1.5f;
         Color = Microsoft.Xna.Framework.Color.MediumPurple;
         Rarity = RarityType.Mythic;
     }
@@ -20,7 +20,7 @@ public class SniperModel : BaseGunModel
     {
         return new()
         {
-            { typeof(PrimaryBulletModel), 1 },
+            { typeof(SniperBulletModel), 1 },
         };
     }
 }

@@ -16,6 +16,7 @@ public abstract class BaseEntityModel
     public float Acceleration { get; set; }
     public float Friction { get; set; }
     public float MaxSpeed { get; set; }
+    public bool IsCollidable { get; set; } = true;
 
     public bool IsDestroyed { get; set; } = false;
 
@@ -36,7 +37,7 @@ public abstract class BaseEntityModel
 
     public virtual void Colision(BaseEntityModel model)
     {
-        if (model is WallModel && GetType() != typeof(WallModel) && GetType() != typeof(DoorModel))
+        if (model is WallModel && IsCollidable)
         {
             var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
 

@@ -15,6 +15,7 @@ public abstract class BaseGunModel : BaseCollectableModel
 
     protected float Delay { get; set; } = 0.5f;
     public float DelayAtual { get; set; }
+    public float BulletSpeedFactor { get; set; } = 1f;
 
     public BaseGunModel((float x, float y) position) : base(position)
     {
@@ -59,7 +60,7 @@ public abstract class BaseGunModel : BaseCollectableModel
 
     private void CreateBullet(Type type, Vector2 direction)
     {
-        var instance = (BaseEntityModel)Activator.CreateInstance(type, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User)!;
+        var instance = (BaseEntityModel)Activator.CreateInstance(type, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User, BulletSpeedFactor)!;
         instance.Position -= new Vector2(instance.Size.X / 2, instance.Size.Y / 2);
         GlobalVariables.CurrentRoom.EntitiesToAdd.Add(instance);
     }

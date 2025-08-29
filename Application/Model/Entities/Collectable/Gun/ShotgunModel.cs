@@ -13,6 +13,7 @@ public class ShotgunModel : BaseGunModel
         Delay = 1f;
         Rarity = Enum.RarityType.Epic;
         Color = Microsoft.Xna.Framework.Color.SaddleBrown;
+        BulletSpeedFactor = 1.2f;
     }
 
     protected override Dictionary<Type, int> Bullets()
