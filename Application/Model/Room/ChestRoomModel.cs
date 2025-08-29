@@ -8,7 +8,7 @@ namespace Application.Model.Room;
 
 public class ChestRoomModel : BaseRoomModel
 {
-    public ChestRoomModel() : base(10 * 64, 10 * 64)
+    public ChestRoomModel() : base(10, 10)
     {
         LoadInitialEntities(new Dictionary<int, Type>()
         {

@@ -27,7 +27,6 @@ public class FlyModel : BaseEnemyModel
         Friction = 300f;
         MaxSpeed = 100f;
         Color = Color.DarkGray;
-        VisionRange = 500f;
 
         Gun = new EnemyGunModel((0, 0));
         Gun.User = this;

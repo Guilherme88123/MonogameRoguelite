@@ -12,6 +12,5 @@ public class SlimeModel : BaseEnemyModel
         Friction = 400f;
         MaxSpeed = 150f;
         Color = Color.DarkGreen;
-        VisionRange = 200f;
     }
 }

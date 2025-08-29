@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Model;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonogameRoguelite.Dto;
 using System;
 using System.Collections.Generic;
-using MonogameRoguelite.Dto;
+using System.Reflection;
 
 namespace MonogameRoguelite.Model.Entities.Base;
 
@@ -38,32 +41,33 @@ public abstract class BaseEntityModel
 
     public virtual void Colision(BaseEntityModel model)
     {
-        if (model is WallModel && IsCollidable)
+    }
+
+    public virtual void WallColision(WallModel model)
+    {
+        var posX = Position.X;
+        var posY = Position.Y;
+
+        var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
+
+        if (intersection.Width < intersection.Height)
         {
-            var intersection = Rectangle.Intersect(Rectangle, model.Rectangle);
-
-            var posX = Position.X;
-            var posY = Position.Y;
-
-            if (intersection.Width < intersection.Height)
-            {
-                // Corrige X
-                if (Position.X < model.Position.X)
-                    posX -= intersection.Width;
-                else
-                    posX += intersection.Width;
-            }
+            // Corrige X
+            if (Position.X < model.Position.X)
+                posX -= intersection.Width;
             else
-            {
-                // Corrige Y
-                if (Position.Y < model.Position.Y)
-                    posY -= intersection.Height;
-                else
-                    posY += intersection.Height;
-            }
-
-            Position = new Vector2(posX, posY);
+                posX += intersection.Width;
         }
+        else
+        {
+            // Corrige Y
+            if (Position.Y < model.Position.Y)
+                posY -= intersection.Height;
+            else
+                posY += intersection.Height;
+        }
+
+        Position = new Vector2(posX, posY);
     }
 
     public virtual void Draw()

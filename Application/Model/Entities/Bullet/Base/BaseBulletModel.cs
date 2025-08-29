@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using MonogameRoguelite.Model.Entities;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
 using System.Collections.Generic;
@@ -38,11 +37,11 @@ public class BaseBulletModel : BaseEntityModel
             Destroy();
         }
 
-        if (model is WallModel wall && IsCollidable)
-        {
-            Destroy();
-        }
-
         base.Colision(model);
+    }
+
+    public override void WallColision(WallModel model)
+    {
+        Destroy();
     }
 }

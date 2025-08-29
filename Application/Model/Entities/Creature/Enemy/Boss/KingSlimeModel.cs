@@ -18,7 +18,6 @@ public class KingSlimeModel : BaseEnemyModel
         Friction = 320f;
         MaxSpeed = 120f;
         Color = Color.DarkGreen;
-        VisionRange = 1000f;
         Name = "King Slime";
     }
 

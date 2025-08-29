@@ -2,15 +2,15 @@
 using System;
 using System.Collections.Generic;
 using MonogameRoguelite.Dto;
-using MonogameRoguelite.Model.Entities;
 using MonogameRoguelite.Model.Entities.Creature.Enemy;
 using MonogameRoguelite.Model.Room.Base;
+using Application.Model;
 
 namespace MonogameRoguelite.Model.Room;
 
 public class MediumRoomModel : BaseRoomModel
 {
-    public MediumRoomModel() : base(20 * 64, 15 * 64)
+    public MediumRoomModel() : base(21, 16)
     {
         LoadInitialEntities(new Dictionary<int, Type>()
         {
@@ -19,13 +19,26 @@ public class MediumRoomModel : BaseRoomModel
         });
     }
 
-    protected override void AddObstacles()
+    protected override string[] AddObstacles()
     {
-        var x = Size.X / 4;
-        var y = Size.Y / 5;
-        var tileSize = WallModel.DefaultSize;
-
-        Entities.Add(new WallModel((x, y), (x * 2, tileSize)));
-        Entities.Add(new WallModel((x, y * 3), (x * 2, tileSize)));
+        return
+        [
+            ".....................",
+            ".....................",
+            ".....................",
+            ".....................",
+            "....XXXXXXXXXXXXX....",
+            ".....................",
+            ".....................",
+            ".....................",
+            ".....................",
+            ".....................",
+            ".....................",
+            "....XXXXXXXXXXXXX....",
+            ".....................",
+            ".....................",
+            ".....................",
+            ".....................",
+        ];
     }
 }

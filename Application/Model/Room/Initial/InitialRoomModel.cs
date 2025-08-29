@@ -4,7 +4,7 @@ namespace MonogameRoguelite.Model.Room.Initial;
 
 public class InitialRoomModel : BaseRoomModel
 {
-    public InitialRoomModel() : base(15 * 64, 10 * 64)
+    public InitialRoomModel() : base(15, 10)
     {
         Finished = true;
         DelayAfterFinish = 0f;

@@ -7,13 +7,13 @@ using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
 using MonogameRoguelite.Model.Entities.Drop.Coin;
 using MonogameRoguelite.Model.Entities.Drop.Xp;
+using Application.Model;
 
 namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
 public abstract class BaseEnemyModel : BaseCreatureModel
 {
     public Vector2 Target { get; set; }
-    public float VisionRange { get; set; }
 
     public const float DelayIdle = 1.5f;
     public float DelayIdleAtual { get; set; }
@@ -38,7 +38,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
                 break;
         }
 
-        if (Vector2.Distance(Position, GlobalVariables.Player.Position) < VisionRange)
+        if (MoveStatus != MoveType.Chase && CanSeePlayer())
         {
             MoveStatus = MoveType.Chase;
         }
@@ -53,16 +53,6 @@ public abstract class BaseEnemyModel : BaseCreatureModel
             { typeof(CoinModel), 1 },
             { typeof(XpNodeModel), 1 },
         };
-    }
-
-    public override void Colision(BaseEntityModel model)
-    {
-        if (model is WallModel wall && Speed.LengthSquared() < 0.01f)
-        {
-            ChooseNewTarget();
-        }
-
-        base.Colision(model);
     }
 
     private void HandleIdle(GameTime gameTime)
@@ -99,12 +89,25 @@ public abstract class BaseEnemyModel : BaseCreatureModel
             return;
         }
 
-        MoveTowards(playerPos, gameTime);
+        var tileSize = (int)WallModel.Size.X;
 
-        if (Vector2.Distance(Position, playerPos) > VisionRange)
+        var playerPoint = new Point((int)playerPos.X / tileSize, (int)playerPos.Y / tileSize);
+        var enemyPoint = new Point((int)Position.X / tileSize, (int)Position.Y / tileSize);
+
+        List<Point> path = FindPath(enemyPoint, playerPoint);
+
+        Console.WriteLine($"Path count: {path.Count}");
+
+        if (path.Count > 1)
         {
-            DelayIdleAtual = DelayIdle;
-            MoveStatus = MoveType.Idle;
+            Point nextStep = path[1];
+
+            Vector2 targetPos = new Vector2(nextStep.X * WallModel.Size.X, nextStep.Y * WallModel.Size.Y);
+
+            if (nextStep.X == enemyPoint.X) targetPos.X = Position.X;
+            if (nextStep.Y == enemyPoint.Y) targetPos.Y = Position.Y;
+
+            MoveTowards(targetPos, gameTime);
         }
     }
 
@@ -126,5 +129,30 @@ public abstract class BaseEnemyModel : BaseCreatureModel
         );
     }
 
+    public bool CanSeePlayer()
+    {
+        var walls = GlobalVariables.CurrentRoom.Walls;
 
+        Vector2 direction = GlobalVariables.Player.Position - Position;
+        float distance = direction.Length();
+        direction.Normalize();
+
+        float step = 16f;
+        Vector2 currentPos = Position;
+
+        for (float i = 0; i < distance; i += step)
+        {
+            currentPos += direction * step;
+
+            foreach (var wall in walls)
+            {
+                if (wall == null) continue;
+
+                if (wall.Rectangle.Contains(currentPos.ToPoint()))
+                    return false;
+            }
+        }
+
+        return true;
+    }
 }

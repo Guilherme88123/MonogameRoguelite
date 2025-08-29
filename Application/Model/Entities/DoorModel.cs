@@ -3,6 +3,7 @@ using MonogameRoguelite.Enum;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Room.Base;
+using Application.Model;
 
 namespace MonogameRoguelite.Model.Entities;
 
@@ -26,7 +27,7 @@ public class DoorModel : BaseEntityModel
         float x = 0f;
         float y = 0f;
 
-        var wallSize = new WallModel((0, 0)).Size.X;
+        var wallSize = WallModel.Size.X;
 
         switch (DirectionPosition)
         {
