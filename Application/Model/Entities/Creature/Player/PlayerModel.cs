@@ -59,10 +59,10 @@ public class PlayerModel : BaseCreatureModel
         Size = new Vector2(48, 64);
 
         Guns.Add(new PistolModel((0, 0)));
-        Guns.Add(new SniperModel((0, 0)));
-        Guns.Add(new BazookaModel((0, 0)));
-        Guns[1].User = this;
-        Guns[2].User = this;
+        //Guns.Add(new SniperModel((0, 0)));
+        //Guns.Add(new BazookaModel((0, 0)));
+        //Guns[1].User = this;
+        //Guns[2].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
     }

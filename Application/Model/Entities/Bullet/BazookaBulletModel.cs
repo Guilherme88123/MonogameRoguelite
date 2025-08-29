@@ -10,7 +10,7 @@ public class BazookaBulletModel : BaseBulletModel
     private bool hasExplosion = false;
     private float explosionTime = 0.4f;
 
-    public BazookaBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position, direction, sender)
+    public BazookaBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor = 1f) : base(position, direction, sender, gunSpeedFactor)
     {
         Size = new Vector2(24, 24);
         Speed = new Vector2(400, 400) * GunSpeedFactor;

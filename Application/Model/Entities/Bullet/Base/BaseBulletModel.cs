@@ -13,16 +13,12 @@ public class BaseBulletModel : BaseEntityModel
     //public float GunDamageFactor { get; set; } = 1f;
     public float GunSpeedFactor { get; set; } = 1f;
 
-    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor) : base(position)
+    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor = 1f) : base(position)
     {
         Sender = sender;
 
         direction.Normalize();
         Direction = direction;
-    }
-
-    public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : this(position, direction, sender, 1f)
-    {
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)

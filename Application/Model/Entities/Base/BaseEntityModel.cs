@@ -17,6 +17,7 @@ public abstract class BaseEntityModel
     public float Friction { get; set; }
     public float MaxSpeed { get; set; }
     public bool IsCollidable { get; set; } = true;
+    public string Name { get; set; }
 
     public bool IsDestroyed { get; set; } = false;
 

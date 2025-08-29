@@ -9,7 +9,7 @@ namespace Application.Model.Entities.Bullet;
 
 public class SniperBulletModel : BaseBulletModel
 {
-    public SniperBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender) : base(position, direction, sender)
+    public SniperBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor) : base(position, direction, sender, gunSpeedFactor)
     {
         Size = new Vector2(20, 20);
         Color = Color.DarkOrange;
