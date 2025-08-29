@@ -228,18 +228,14 @@ public class PlayerModel : BaseCreatureModel
 
             if (!GlobalVariables.CurrentRoom.Finished) return;
 
-            mapService.Move(door.DirectionPosition, this);
+            mapService.Move(door.DirectionPosition);
         }
 
         if (model is PortalModel portal)
         {
             var mapService = GlobalVariables.GetService<IMapService>();
 
-            mapService.GenerateMap(5);
-
-            GlobalVariables.CurrentRoom.Entities.Add(this);
-
-            Position = new((int)GlobalVariables.CurrentRoom.Size.X / 2, (int)GlobalVariables.CurrentRoom.Size.Y / 2);
+            mapService.GoToNextFloor();
         }
 
         base.Colision(model);

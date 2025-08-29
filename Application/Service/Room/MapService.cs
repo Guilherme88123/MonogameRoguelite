@@ -4,7 +4,6 @@ using System;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Enum;
 using MonogameRoguelite.Model.Entities;
-using MonogameRoguelite.Model.Entities.Creature.Player;
 using MonogameRoguelite.Model.Room;
 using MonogameRoguelite.Model.Room.Base;
 using MonogameRoguelite.Model.Room.Boss;
@@ -29,16 +28,16 @@ public class MapService : IMapService
         (0, -1, DirectionType.Up)
     };
 
-    public void GenerateMap(int size)
+    public void GenerateMap()
     {
-        Rooms = GenerateRooms(size);
+        Rooms = GenerateRooms(GlobalVariables.MapSize);
     }
 
     public BaseRoomModel[,] GenerateRooms(int width)
     {
         var rooms = new BaseRoomModel[width, width];
         var roomsCount = 1;
-        int roomsNumber = 1;// (width * width) / 3;
+        int roomsNumber = (width * width) / 3;
 
         int middle = width / 2;
         rooms[middle, middle] = new InitialRoomModel();
@@ -71,7 +70,7 @@ public class MapService : IMapService
 
             rooms[oldX, oldY].Entities.Add(new DoorModel(direc, rooms[oldX, oldY]));
             rooms[oldX, oldY].NextRoomPosition = new Vector2(actualX, actualY);
-            rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainst(direc), rooms[actualX, actualY]));
+            rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainstDirection(direc), rooms[actualX, actualY]));
             (oldX, oldY) = (actualX, actualY);
         }
 
@@ -95,7 +94,7 @@ public class MapService : IMapService
         }
     }
 
-    private DirectionType GetAgainst(DirectionType direc)
+    private DirectionType GetAgainstDirection(DirectionType direc)
     {
         return direc switch
         {
@@ -106,9 +105,11 @@ public class MapService : IMapService
         };
     }
 
-    public void Move(DirectionType direc, PlayerModel player)
+    public void Move(DirectionType direc)
     {
         Vector2 newPosition = Vector2.Zero;
+
+        var player = GlobalVariables.Player;
 
         switch (direc)
         {
@@ -183,15 +184,26 @@ public class MapService : IMapService
 
     private BaseRoomModel GetRandomRoom()
     {
-        var x = Random.Next(11);
+        var x = Random.Next(12);
 
         return x switch
         {
             _ when 0 >= x && x <= 3 => new EasyRoomModel(),
             _ when 4 >= x && x <= 6 => new MediumRoomModel(),
             _ when 7 >= x && x <= 9 => new HardRoomModel(),
-            _ when x == 10 => new ChestRoomModel(),
+            _ when x >= 10 => new ChestRoomModel(),
             _ => new EasyRoomModel()
         };
+    }
+
+    public void GoToNextFloor()
+    {
+        GlobalVariables.Flor += 1;
+
+        GenerateMap();
+
+        GlobalVariables.CurrentRoom.Entities.Add(GlobalVariables.Player);
+
+        GlobalVariables.Player.Position = new((int)GlobalVariables.CurrentRoom.Size.X / 2, (int)GlobalVariables.CurrentRoom.Size.Y / 2);
     }
 }

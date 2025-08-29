@@ -19,6 +19,8 @@ public static class GlobalVariables
     public static PlayerModel Player;
     public static BaseRoomModel CurrentRoom;
     public static Game Game;
+    public static int Flor = 1;
+    public static int MapSize = 5;
 
     public static IServiceProvider ServiceProvider { get; set; }
 

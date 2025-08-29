@@ -5,7 +5,8 @@ namespace Application.Interface.Room;
 
 public interface IMapService
 {
-    public void Move(DirectionType direction, PlayerModel player);
+    public void Move(DirectionType direction);
     public void DrawMap();
-    public void GenerateMap(int size);
+    public void GenerateMap();
+    public void GoToNextFloor();
 }

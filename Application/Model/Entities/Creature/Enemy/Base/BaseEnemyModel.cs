@@ -18,7 +18,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
     public const float DelayIdle = 1.5f;
     public float DelayIdleAtual { get; set; }
 
-    public BaseEnemyModel((float x, float y) position, int maxHealt) : base(position, maxHealt)
+    public BaseEnemyModel((float x, float y) position, int maxHealt) : base(position, maxHealt + (int)((maxHealt * 0.5) * (GlobalVariables.Flor - 1)))
     {
         ChooseNewTarget();
     }

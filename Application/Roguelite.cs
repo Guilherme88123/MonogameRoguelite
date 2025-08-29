@@ -58,7 +58,7 @@ public class Roguelite : Game
 
     protected override void Initialize()
     {
-        MapService.GenerateMap(5);
+        MapService.GenerateMap();
 
         var Player = new PlayerModel(((int)GlobalVariables.CurrentRoom.Size.X / 2, 
                                       (int)GlobalVariables.CurrentRoom.Size.Y / 2));
