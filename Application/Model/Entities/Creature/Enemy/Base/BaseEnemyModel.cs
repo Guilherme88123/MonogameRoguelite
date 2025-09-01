@@ -13,7 +13,7 @@ namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
 public abstract class BaseEnemyModel : BaseCreatureModel
 {
-    public Vector2 Target { get; set; }
+    public Vector2 FinalTarget { get; set; }
 
     public const float DelayIdle = 1.5f;
     public float DelayIdleAtual { get; set; }
@@ -67,10 +67,9 @@ public abstract class BaseEnemyModel : BaseCreatureModel
 
     private void HandlePatrol(GameTime gameTime)
     {
-        MoveTowards(Target, gameTime);
-        TargetDirection = Target;
+        MoveTowards(FinalTarget, gameTime);
 
-        if (Vector2.Distance(Position, Target) < 5f)
+        if (Vector2.Distance(Position, FinalTarget) < 5f)
         {
             DelayIdleAtual = DelayIdle;
             MoveStatus = MoveType.Idle;
@@ -79,9 +78,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
 
     private void HandleChase(GameTime gameTime)
     {
-        var playerPos = GlobalVariables.Player.Position;
-
-        if (playerPos == Vector2.Zero)
+        if (GlobalVariables.Player.CenterPosition == Vector2.Zero)
         {
             DelayIdleAtual = DelayIdle;
             MoveStatus = MoveType.Idle;
@@ -89,14 +86,12 @@ public abstract class BaseEnemyModel : BaseCreatureModel
             return;
         }
 
-        var tileSize = (int)WallModel.Size.X;
+        MoveTowards(GlobalVariables.Player.Point, gameTime);
+    }
 
-        var playerPoint = new Point((int)playerPos.X / tileSize, (int)playerPos.Y / tileSize);
-        var enemyPoint = new Point((int)Position.X / tileSize, (int)Position.Y / tileSize);
-
-        List<Point> path = FindPath(enemyPoint, playerPoint);
-
-        Console.WriteLine($"Path count: {path.Count}");
+    private void MoveTowards(Point target, GameTime gameTime)
+    {
+        List<Point> path = FindPath(Point, target);
 
         if (path.Count > 1)
         {
@@ -104,33 +99,48 @@ public abstract class BaseEnemyModel : BaseCreatureModel
 
             Vector2 targetPos = new Vector2(nextStep.X * WallModel.Size.X, nextStep.Y * WallModel.Size.Y);
 
-            if (nextStep.X == enemyPoint.X) targetPos.X = Position.X;
-            if (nextStep.Y == enemyPoint.Y) targetPos.Y = Position.Y;
+            if (nextStep.X == Point.X) targetPos.X = Position.X;
+            if (nextStep.Y == Point.Y) targetPos.Y = Position.Y;
 
-            MoveTowards(targetPos, gameTime);
+            Vector2 direction = targetPos - Position;
+            if (direction.LengthSquared() > 0.01f)
+            {
+                Move(direction, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            }
         }
     }
 
     private void MoveTowards(Vector2 target, GameTime gameTime)
     {
-        Vector2 direction = target - Position;
-        TargetDirection = direction;
-        if (direction.LengthSquared() > 0.01f)
-        {
-            Move(direction, (float)gameTime.ElapsedGameTime.TotalSeconds);
-        }
+        var targetPoint = new Point((int)target.X / (int)WallModel.Size.X, (int)target.Y / (int)WallModel.Size.Y);
+        MoveTowards(targetPoint, gameTime);
     }
 
     private void ChooseNewTarget()
     {
-        Target = new Vector2(
-            new Random().Next(50, GlobalVariables.Graphics.PreferredBackBufferWidth - 50), // limites da sala
-            new Random().Next(50, GlobalVariables.Graphics.PreferredBackBufferHeight - 50)
-        );
+        var walls = GlobalVariables.CurrentRoom.Walls;
+        var target = Vector2.Zero;
+
+        while (target == Vector2.Zero)
+        {
+            var tryTarget = new Vector2(
+                new Random().Next(1, walls.GetLength(0) - 1),
+                new Random().Next(1, walls.GetLength(1) - 1)
+                );
+
+            if (walls[(int)tryTarget.X, (int)tryTarget.Y] == null)
+            {
+                target = tryTarget;
+            }
+        }
+
+        FinalTarget = target * WallModel.Size;
     }
 
     public bool CanSeePlayer()
     {
+        //return false;
+
         var walls = GlobalVariables.CurrentRoom.Walls;
 
         Vector2 direction = GlobalVariables.Player.Position - Position;

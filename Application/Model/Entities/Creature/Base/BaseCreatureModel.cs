@@ -63,6 +63,15 @@ public abstract class BaseCreatureModel : BaseEntityModel
                     continue;
                 if (closedList.Contains(neighbor))
                     continue;
+                if (neighbor.X - current.Position.X != 0 && neighbor.Y - current.Position.Y != 0)
+                {
+                    // 🚫 Bloqueia corte de quina
+                    if (walls[current.Position.X, neighbor.Y] != null ||
+                        walls[neighbor.X, current.Position.Y] != null)
+                    {
+                        continue;
+                    }
+                }
 
                 float tentativeG = current.ValueOfInit + 1;
 

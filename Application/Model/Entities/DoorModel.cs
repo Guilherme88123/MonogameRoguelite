@@ -32,20 +32,20 @@ public class DoorModel : BaseEntityModel
         switch (DirectionPosition)
         {
             case DirectionType.Left:
-                x = -wallSize;
+                x = 0;
                 y = RoomSize.Y / 2 - (Size.Y / 2);
                 break;
             case DirectionType.Right:
-                x = RoomSize.X - (int)(Size.X - wallSize);
+                x = RoomSize.X - Size.X;
                 y = RoomSize.Y / 2 - (Size.Y / 2);
                 break;
             case DirectionType.Up:
                 x = RoomSize.X / 2 - (Size.X / 2);
-                y = -wallSize;
+                y = 0;
                 break;
             case DirectionType.Down:
                 x = RoomSize.X / 2 - (Size.X / 2);
-                y = RoomSize.Y - (Size.Y - wallSize);
+                y = RoomSize.Y - Size.Y;
                 break;
         }
 

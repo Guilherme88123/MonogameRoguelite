@@ -31,9 +31,6 @@ public abstract class BaseRoomModel
     {
         Size = new Vector2(width * WallModel.Size.X, height * WallModel.Size.Y);
 
-        width += 2;
-        height += 2;
-
         Walls = new WallModel[width, height];
 
         LoadWalls();
@@ -102,7 +99,7 @@ public abstract class BaseRoomModel
             for (int y = 0; y < Walls.GetLength(1); y++)
             {
                 var wall = Walls[x, y];
-                if (wall != null) wall.Draw(x - 1, y - 1);
+                if (wall != null) wall.Draw(x, y);
             }
         }
     }
@@ -195,8 +192,8 @@ public abstract class BaseRoomModel
 
     private void RegisterObstacles(string[] obstacles)
     {
-        var interiorWidth = Walls.GetLength(0) - 2;
-        var interiorHeight = Walls.GetLength(1) - 2;
+        var interiorWidth = Walls.GetLength(0);
+        var interiorHeight = Walls.GetLength(1);
 
         if (obstacles.Length != interiorHeight ||
             obstacles[0].Length != interiorWidth)

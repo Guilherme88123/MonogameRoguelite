@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace Application.Infrastructure;
 
@@ -28,10 +27,14 @@ public static class VectorHelper
     {
         Point[] directions =
         {
-            new Point(1, 0),
-            new Point(-1, 0),
-            new Point(0, 1),
-            new Point(0, -1)
+            new Point(1, 0),   // right
+            new Point(-1, 0),  // left
+            new Point(0, 1),   // down
+            new Point(0, -1),  // up
+            new Point(1, -1),  // right-up
+            new Point(-1, -1), // left-up
+            new Point(1, 1),   // rigth-down
+            new Point(-1, 1),  // left-down
         };
 
         foreach (var d in directions)

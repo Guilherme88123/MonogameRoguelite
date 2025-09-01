@@ -21,6 +21,7 @@ public abstract class BaseEntityModel
     public float MaxSpeed { get; set; }
     public bool IsCollidable { get; set; } = true;
     public string Name { get; set; }
+    public Point Point => new Point((int)CenterPosition.X / (int)WallModel.Size.X, (int)CenterPosition.Y / (int)WallModel.Size.Y);
 
     public bool IsDestroyed { get; set; } = false;
 

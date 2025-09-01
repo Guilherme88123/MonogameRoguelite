@@ -40,6 +40,7 @@ public class FlyModel : BaseEnemyModel
 
         if (MoveStatus == Enum.MoveType.Chase)
         {
+            TargetDirection = Vector2.Normalize(GlobalVariables.Player.CenterPosition - CenterPosition);
             Gun.Shoot();
         }
 
