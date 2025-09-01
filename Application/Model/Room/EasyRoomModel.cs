@@ -9,10 +9,14 @@ public class EasyRoomModel : BaseRoomModel
 {
     public EasyRoomModel() : base(21, 16)
     {
-        LoadInitialEntities(new Dictionary<int, Type>()
+    }
+
+    protected override Dictionary<int, Type> InitialEntities()
+    {
+        return new Dictionary<int, Type>()
         {
             { 2, typeof(SlimeModel) }
-        });
+        };
     }
 
     protected override string[] AddObstacles()

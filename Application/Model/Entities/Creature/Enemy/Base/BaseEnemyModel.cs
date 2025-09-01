@@ -13,7 +13,7 @@ namespace MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 
 public abstract class BaseEnemyModel : BaseCreatureModel
 {
-    public Vector2 FinalTarget { get; set; }
+    public Point FinalTarget { get; set; }
 
     public const float DelayIdle = 1.5f;
     public float DelayIdleAtual { get; set; }
@@ -69,7 +69,7 @@ public abstract class BaseEnemyModel : BaseCreatureModel
     {
         MoveTowards(FinalTarget, gameTime);
 
-        if (Vector2.Distance(Position, FinalTarget) < 5f)
+        if (Point == FinalTarget)
         {
             DelayIdleAtual = DelayIdle;
             MoveStatus = MoveType.Idle;
@@ -110,31 +110,26 @@ public abstract class BaseEnemyModel : BaseCreatureModel
         }
     }
 
-    private void MoveTowards(Vector2 target, GameTime gameTime)
-    {
-        var targetPoint = new Point((int)target.X / (int)WallModel.Size.X, (int)target.Y / (int)WallModel.Size.Y);
-        MoveTowards(targetPoint, gameTime);
-    }
-
     private void ChooseNewTarget()
     {
         var walls = GlobalVariables.CurrentRoom.Walls;
-        var target = Vector2.Zero;
+        var target = Point.Zero;
 
-        while (target == Vector2.Zero)
+        while (target == Point.Zero)
         {
-            var tryTarget = new Vector2(
-                new Random().Next(1, walls.GetLength(0) - 1),
-                new Random().Next(1, walls.GetLength(1) - 1)
+            var tryTarget = new Point(
+                new Random().Next(Math.Max(1, Point.X - 5), Math.Min(Point.X + 5, walls.GetLength(0) - 1)),
+                new Random().Next(Math.Max(1, Point.Y - 5), Math.Min(Point.Y + 5, walls.GetLength(1) - 1))
                 );
 
-            if (walls[(int)tryTarget.X, (int)tryTarget.Y] == null)
+            if (walls[tryTarget.X, tryTarget.Y] == null)
             {
                 target = tryTarget;
             }
         }
 
-        FinalTarget = target * WallModel.Size;
+        FinalTarget = target;
+        TargetDirection = new Vector2(FinalTarget.X * WallModel.Size.X, FinalTarget.Y * WallModel.Size.Y) - Position;
     }
 
     public bool CanSeePlayer()

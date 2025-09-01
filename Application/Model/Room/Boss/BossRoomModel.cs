@@ -11,10 +11,14 @@ public class BossRoomModel : BaseRoomModel
 {
     public BossRoomModel() : base(25, 20)
     {
-        LoadInitialEntities(new Dictionary<int, Type>()
+    }
+
+    protected override Dictionary<int, Type> InitialEntities()
+    {
+        return new Dictionary<int, Type>()
         {
             { 1, typeof(KingSlimeModel) }
-        });
+        };
     }
 
     protected override string[] AddObstacles()

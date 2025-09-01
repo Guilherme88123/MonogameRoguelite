@@ -24,6 +24,7 @@ public abstract class BaseRoomModel
 
     public bool Finished { get; set; } = false;
     public bool Visited { get; set; } = false;
+    public bool Loaded { get; set; } = false;
 
     public float DelayAfterFinish { get; set; } = 2.0f;
 
@@ -145,7 +146,26 @@ public abstract class BaseRoomModel
         }
     }
 
-    protected void LoadInitialEntities(Dictionary<int, Type> entities)
+    public void OnRoomEnter()
+    {
+        if (Loaded) return;
+
+        var entities = InitialEntities();
+
+        if (entities.Any())
+        {
+            LoadInitialEntities(entities);
+        }
+
+        Loaded = true;
+    }
+
+    protected virtual Dictionary<int, Type> InitialEntities()
+    {
+        return new();
+    }
+
+    private void LoadInitialEntities(Dictionary<int, Type> entities)
     {
         foreach (var entityType in entities)
         {

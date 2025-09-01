@@ -12,11 +12,15 @@ public class HardRoomModel : BaseRoomModel
 {
     public HardRoomModel() : base(23, 18)
     {
-        LoadInitialEntities(new Dictionary<int, Type>()
+    }
+
+    protected override Dictionary<int, Type> InitialEntities()
+    {
+        return new Dictionary<int, Type>()
         {
             { 3, typeof(SlimeModel) },
             { 1, typeof(FlyModel) }
-        });
+        };
     }
 
     protected override string[] AddObstacles()

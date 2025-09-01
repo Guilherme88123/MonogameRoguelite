@@ -44,6 +44,7 @@ public class MapService : IMapService
         X = Y = middle;
         GlobalVariables.CurrentRoom = rooms[middle, middle];
         GlobalVariables.CurrentRoom.Visited = true;
+        GlobalVariables.CurrentRoom.OnRoomEnter();
 
         int oldX = middle;
         int oldY = middle;
@@ -115,23 +116,23 @@ public class MapService : IMapService
         {
             case DirectionType.Right:
                 X += 1;
-                newPosition = new Vector2(40,
+                newPosition = new Vector2(100,
                     Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Left:
                 X -= 1;
-                newPosition = new Vector2(Rooms[X, Y].Size.X - player.Size.X - 40,
+                newPosition = new Vector2(Rooms[X, Y].Size.X - player.Size.X - 100,
                     Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Up:
                 Y -= 1;
                 newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
-                    Rooms[X, Y].Size.Y - player.Size.Y - 40);
+                    Rooms[X, Y].Size.Y - player.Size.Y - 100);
                 break;
             case DirectionType.Down:
                 Y += 1;
                 newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
-                    40);
+                    100);
                 break;
         }
 
@@ -140,6 +141,7 @@ public class MapService : IMapService
         player.Position = newPosition;
         GlobalVariables.CurrentRoom.Entities.Add(player);
         GlobalVariables.CurrentRoom.Visited = true;
+        GlobalVariables.CurrentRoom.OnRoomEnter();
         if (GlobalVariables.CurrentRoom.NextRoomPosition != Vector2.Zero) Rooms[(int)GlobalVariables.CurrentRoom.NextRoomPosition.X, (int)GlobalVariables.CurrentRoom.NextRoomPosition.Y].Visited = true;
     }
 
