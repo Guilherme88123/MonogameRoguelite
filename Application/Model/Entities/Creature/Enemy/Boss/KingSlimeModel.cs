@@ -34,7 +34,7 @@ public class KingSlimeModel : BaseEnemyModel
     {
         base.Draw();
 
-        var x = (int)GlobalVariables.Graphics.PreferredBackBufferWidth / 4;
+        var x = GlobalVariables.Graphics.PreferredBackBufferWidth / 4;
         var width = x * 2;
         var y = 20;
         var height = 30;
@@ -48,12 +48,9 @@ public class KingSlimeModel : BaseEnemyModel
         GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(healthX, healthY, healthWidth, healthHeight), Color.Red);
 
         var textName = Name;
-        var textHealth = $"{Health}/{MaxHealth}";
 
         var textNameSize = GlobalVariables.Font.MeasureString(textName);
-        var textHealthSize = GlobalVariables.Font.MeasureString(textHealth);
 
         GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, textName, new Vector2(healthX + 5, healthY + healthHeight / 2 - textNameSize.Y / 2), Color.White);
-        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, textHealth, new Vector2(x + width / 2 - textHealthSize.X / 2, healthY + healthHeight / 2 - textHealthSize.Y / 2), Color.White);
     }
 }

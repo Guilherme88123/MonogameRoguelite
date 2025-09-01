@@ -116,23 +116,23 @@ public class MapService : IMapService
         {
             case DirectionType.Right:
                 X += 1;
-                newPosition = new Vector2(100,
+                newPosition = new Vector2(110,
                     Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Left:
                 X -= 1;
-                newPosition = new Vector2(Rooms[X, Y].Size.X - player.Size.X - 100,
+                newPosition = new Vector2(Rooms[X, Y].Size.X - player.Size.X - 110,
                     Rooms[X, Y].Size.Y / 2 - (player.Size.Y / 2));
                 break;
             case DirectionType.Up:
                 Y -= 1;
                 newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
-                    Rooms[X, Y].Size.Y - player.Size.Y - 100);
+                    Rooms[X, Y].Size.Y - player.Size.Y - 110);
                 break;
             case DirectionType.Down:
                 Y += 1;
                 newPosition = new Vector2(Rooms[X, Y].Size.X / 2 - (player.Size.X / 2),
-                    100);
+                    110);
                 break;
         }
 

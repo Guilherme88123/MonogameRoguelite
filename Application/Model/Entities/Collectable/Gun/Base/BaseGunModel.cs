@@ -21,6 +21,7 @@ public abstract class BaseGunModel : BaseCollectableModel
     {
         Size = new(32, 8);
         Color = Color.Black;
+        DelayAtual = Delay;
     }
 
     public void Shoot()

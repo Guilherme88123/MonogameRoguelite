@@ -39,11 +39,29 @@ public abstract class BaseRoomModel
 
     protected (float, float) GetRandomPosition()
     {
-        var random = new Random();
-        var x = random.Next(50, (int)Size.X - 50);
-        var y = random.Next(50, (int)Size.Y - 50);
+        var walls = GlobalVariables.CurrentRoom.Walls;
+        var target = Point.Zero;
 
-        return (x, y);
+        var playerAreaRectangle = new Rectangle(
+            (GlobalVariables.Player.Point.X - 5),
+            (GlobalVariables.Player.Point.Y - 5),
+            10,
+            10);
+
+        while (target == Point.Zero)
+        {
+            var tryTarget = new Point(
+                new Random().Next(1, walls.GetLength(0) - 1),
+                new Random().Next(1, walls.GetLength(1) - 1)
+                );
+
+            if (walls[tryTarget.X, tryTarget.Y] == null && !playerAreaRectangle.Contains(tryTarget))
+            {
+                target = tryTarget;
+            }
+        }
+
+        return (target.X * WallModel.Size.X, target.Y * WallModel.Size.Y);
     }
 
     public virtual void Update(GameTime gameTime)
@@ -150,12 +168,7 @@ public abstract class BaseRoomModel
     {
         if (Loaded) return;
 
-        var entities = InitialEntities();
-
-        if (entities.Any())
-        {
-            LoadInitialEntities(entities);
-        }
+        LoadInitialEntities();
 
         Loaded = true;
     }
@@ -165,8 +178,12 @@ public abstract class BaseRoomModel
         return new();
     }
 
-    private void LoadInitialEntities(Dictionary<int, Type> entities)
+    private void LoadInitialEntities()
     {
+        var entities = InitialEntities();
+
+        if (entities == null || !entities.Any()) return;
+
         foreach (var entityType in entities)
         {
             for (int i = 0; i < entityType.Key; i++)
