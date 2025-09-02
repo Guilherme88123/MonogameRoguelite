@@ -1,6 +1,6 @@
-﻿using Application.Enum;
+﻿using Application.Dto;
+using Application.Enum;
 using Application.Infrastructure;
-using Application.Model;
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
@@ -40,16 +40,16 @@ public abstract class BaseCreatureModel : BaseEntityModel
         int width = walls.GetLength(0);
         int height = walls.GetLength(1);
 
-        var openList = new List<Node>();
+        var openList = new List<NodeDto>();
         var closedList = new HashSet<Point>();
 
-        Node startNode = new Node(start) { ValueOfInit = 0, Heuristica = VectorHelper.Heuristic(start, goal) };
+        NodeDto startNode = new NodeDto(start) { ValueOfInit = 0, Heuristica = VectorHelper.Heuristic(start, goal) };
         openList.Add(startNode);
 
         while (openList.Count > 0)
         {
             // pega o nó com menor F
-            Node current = openList.OrderBy(n => n.ValueTotal).First();
+            NodeDto current = openList.OrderBy(n => n.ValueTotal).First();
 
             if (current.Position == goal)
                 return VectorHelper.ReconstructPath(current);
@@ -75,10 +75,10 @@ public abstract class BaseCreatureModel : BaseEntityModel
 
                 float tentativeG = current.ValueOfInit + 1;
 
-                Node neighborNode = openList.FirstOrDefault(n => n.Position == neighbor);
+                NodeDto neighborNode = openList.FirstOrDefault(n => n.Position == neighbor);
                 if (neighborNode == null)
                 {
-                    neighborNode = new Node(neighbor)
+                    neighborNode = new NodeDto(neighbor)
                     {
                         Parent = current,
                         ValueOfInit = tentativeG,

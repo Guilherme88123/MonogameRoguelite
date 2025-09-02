@@ -87,7 +87,9 @@ public abstract class BaseEntityModel
 
         foreach (var entityType in drops)
         {
-            for (int i = 0; i < entityType.Value; i++)
+            var quantidadeDrops = new Random().Next(entityType.Value.Item1, entityType.Value.Item2 + 1);
+
+            for (int i = 0; i < quantidadeDrops; i++)
             {
                 var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, ((int)Position.X, (int)Position.Y))!;
                 entities.Add(instance);
@@ -95,7 +97,7 @@ public abstract class BaseEntityModel
         }
     }
 
-    protected virtual Dictionary<Type, int> Drops()
+    protected virtual Dictionary<Type, (int, int)> Drops()
     {
         return new();
     }

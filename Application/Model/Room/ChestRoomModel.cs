@@ -15,11 +15,11 @@ public class ChestRoomModel : BaseRoomModel
         DelayAfterFinish = 0f;
     }
 
-    protected override Dictionary<int, Type> InitialEntities()
+    protected override Dictionary<Type, (int, int)> InitialEntities()
     {
-        return new Dictionary<int, Type>()
+        return new Dictionary<Type, (int, int)>()
         {
-            { 1, typeof(ChestModel) }
+            { typeof(ChestModel), (1, 1) }
         };
     }
 }

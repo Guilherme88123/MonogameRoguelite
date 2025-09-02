@@ -1,5 +1,4 @@
-﻿using Application.Model;
-using Application.Model.Entities;
+﻿using Application.Model.Entities;
 using MonogameRoguelite.Model.Entities.Creature.Enemy.Boss;
 using MonogameRoguelite.Model.Room.Base;
 using System;
@@ -13,11 +12,11 @@ public class BossRoomModel : BaseRoomModel
     {
     }
 
-    protected override Dictionary<int, Type> InitialEntities()
+    protected override Dictionary<Type, (int, int)> InitialEntities()
     {
-        return new Dictionary<int, Type>()
+        return new Dictionary<Type, (int, int)>()
         {
-            { 1, typeof(KingSlimeModel) }
+            { typeof(KingSlimeModel), (1, 2) },
         };
     }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Application.Model.Entities.Drop.Heart;
+using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Creature.Enemy.Base;
 using MonogameRoguelite.Model.Entities.Drop.Coin;
@@ -21,12 +22,13 @@ public class KingSlimeModel : BaseEnemyModel
         Name = "King Slime";
     }
 
-    protected override Dictionary<Type, int> Drops()
+    protected override Dictionary<Type, (int, int)> Drops()
     {
         return new()
         {
-            { typeof(CoinModel), 3 },
-            { typeof(XpNodeModel), 2 },
+            { typeof(HeartModel), (1, 2) },
+            { typeof(CoinModel), (2, 3) },
+            { typeof(XpNodeModel), (2, 3) },
         };
     }
 

@@ -173,7 +173,7 @@ public abstract class BaseRoomModel
         Loaded = true;
     }
 
-    protected virtual Dictionary<int, Type> InitialEntities()
+    protected virtual Dictionary<Type, (int, int)> InitialEntities()
     {
         return new();
     }
@@ -186,9 +186,11 @@ public abstract class BaseRoomModel
 
         foreach (var entityType in entities)
         {
-            for (int i = 0; i < entityType.Key; i++)
+            var quantidadeEnemies = new Random().Next(entityType.Value.Item1, entityType.Value.Item2 + 1);
+
+            for (int i = 0; i < quantidadeEnemies; i++)
             {
-                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Value, GetRandomPosition())!;
+                var instance = (BaseEntityModel)Activator.CreateInstance(entityType.Key, GetRandomPosition())!;
                 EntitiesToAdd.Add(instance);
             }
         }

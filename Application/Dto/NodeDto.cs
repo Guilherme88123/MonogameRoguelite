@@ -1,16 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Application.Model;
+namespace Application.Dto;
 
-public class Node
+public class NodeDto
 {
     public Point Position { get; }
-    public Node Parent { get; set; }
+    public NodeDto Parent { get; set; }
     public float ValueOfInit { get; set; }
     public float Heuristica { get; set; }
     public float ValueTotal => ValueOfInit + Heuristica;
 
-    public Node(Point pos)
+    public NodeDto(Point pos)
     {
         Position = pos;
     }

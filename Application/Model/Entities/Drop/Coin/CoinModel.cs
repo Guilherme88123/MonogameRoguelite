@@ -7,7 +7,7 @@ public class CoinModel : BaseDropModel
 {
     public CoinModel((int x, int y) position) : base(position)
     {
-        Size = new Vector2(32, 32);
+        Size = new Vector2(24, 24);
         Color = Color.Gold;
         Value = 1;
     }

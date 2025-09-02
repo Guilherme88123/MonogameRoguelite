@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Application.Model.Entities;
+using Application.Model.Entities.Creature.Enemy;
 using MonogameRoguelite.Model.Entities.Creature.Enemy;
 using MonogameRoguelite.Model.Room.Base;
+using System;
+using System.Collections.Generic;
 
 namespace MonogameRoguelite.Model.Room;
 
@@ -11,11 +13,12 @@ public class EasyRoomModel : BaseRoomModel
     {
     }
 
-    protected override Dictionary<int, Type> InitialEntities()
+    protected override Dictionary<Type, (int, int)> InitialEntities()
     {
-        return new Dictionary<int, Type>()
+        return new Dictionary<Type, (int, int)>()
         {
-            { 2, typeof(SlimeModel) }
+            { typeof(SlimeModel), (1, 2) },
+            { typeof(CockroachModel), (0, 2) },
         };
     }
 

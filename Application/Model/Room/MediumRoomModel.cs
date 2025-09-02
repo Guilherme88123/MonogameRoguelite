@@ -1,10 +1,11 @@
-﻿using Application.Model.Entities.Creature.Enemy;
-using System;
-using System.Collections.Generic;
+﻿using Application.Model;
+using Application.Model.Entities.Creature.Enemy;
+using Application.Model.Entities.Creature.Enemy.Ranged;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Creature.Enemy;
 using MonogameRoguelite.Model.Room.Base;
-using Application.Model;
+using System;
+using System.Collections.Generic;
 
 namespace MonogameRoguelite.Model.Room;
 
@@ -14,12 +15,13 @@ public class MediumRoomModel : BaseRoomModel
     {
     }
 
-    protected override Dictionary<int, Type> InitialEntities()
+    protected override Dictionary<Type, (int, int)> InitialEntities()
     {
-        return new Dictionary<int, Type>()
+        return new Dictionary<Type, (int, int)>()
         {
-            { 2, typeof(SlimeModel) },
-            { 1, typeof(FlyModel) }
+            { typeof(SlimeModel), (1, 2) },
+            { typeof(FlyModel), (1, 1) },
+            { typeof(SlothModel), (0, 1) },
         };
     }
 

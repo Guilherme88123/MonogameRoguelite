@@ -1,4 +1,4 @@
-﻿using Application.Model;
+﻿using Application.Dto;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ public static class VectorHelper
         }
     }
 
-    public static List<Point> ReconstructPath(Node node)
+    public static List<Point> ReconstructPath(NodeDto node)
     {
         List<Point> path = new List<Point>();
         while (node != null)

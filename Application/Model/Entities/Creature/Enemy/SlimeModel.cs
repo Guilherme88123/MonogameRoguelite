@@ -8,9 +8,9 @@ public class SlimeModel : BaseEnemyModel
     public SlimeModel((float x, float y) position) : base(position, 5)
     {
         Size = new Vector2(48, 48);
-        Acceleration = 750f;
-        Friction = 400f;
-        MaxSpeed = 150f;
+        Acceleration = 700f;
+        Friction = 350f;
+        MaxSpeed = 120f;
         Color = Color.DarkGreen;
     }
 }

@@ -46,12 +46,12 @@ public abstract class BaseEnemyModel : BaseCreatureModel
         base.Update(gameTime, entities);
     }
 
-    protected override Dictionary<Type, int> Drops()
+    protected override Dictionary<Type, (int, int)> Drops()
     {
         return new()
         {
-            { typeof(CoinModel), 1 },
-            { typeof(XpNodeModel), 1 },
+            { typeof(CoinModel), (0, 2) },
+            { typeof(XpNodeModel), (1, 2) },
         };
     }
 
