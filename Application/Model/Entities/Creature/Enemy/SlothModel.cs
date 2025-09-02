@@ -15,7 +15,7 @@ public class SlothModel : BaseEnemyModel
         Size = new Vector2(96, 96);
         Acceleration = 450f;
         Friction = 250f;
-        MaxSpeed = 80f;
+        MaxSpeed = 100f;
         Color = Color.SaddleBrown;
     }
 

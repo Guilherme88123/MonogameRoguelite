@@ -179,6 +179,7 @@ public class MapService : IMapService
             InitialRoomModel => Color.Blue,
             BossRoomModel => Color.Red,
             ChestRoomModel => Color.Gold,
+            MercantRoomModel => Color.YellowGreen,
             _ when room.Finished => Color.Green,
             _ => Color.Gray,
         };
@@ -186,14 +187,15 @@ public class MapService : IMapService
 
     private BaseRoomModel GetRandomRoom()
     {
-        var x = Random.Next(12);
+        var x = Random.Next(13);
 
         return x switch
         {
             _ when 0 >= x && x <= 3 => new EasyRoomModel(),
             _ when 4 >= x && x <= 6 => new MediumRoomModel(),
             _ when 7 >= x && x <= 9 => new HardRoomModel(),
-            _ when x >= 10 => new ChestRoomModel(),
+            _ when 10 >= x && x <= 11 => new ChestRoomModel(),
+            _ when x >= 12 => new MercantRoomModel(),
             _ => new EasyRoomModel()
         };
     }

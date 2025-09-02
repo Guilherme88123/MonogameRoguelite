@@ -27,7 +27,7 @@ public class Roguelite : Game
     {
         var graphics = new GraphicsDeviceManager(this);
         graphics.PreferredBackBufferWidth = 500;
-        graphics.PreferredBackBufferHeight = 250;
+        graphics.PreferredBackBufferHeight = 300;
         //graphics.IsFullScreen = true;
         IsFixedTimeStep = true;
         TargetElapsedTime = TimeSpan.FromSeconds(1d / 120d);

@@ -16,7 +16,7 @@ public class BossRoomModel : BaseRoomModel
     {
         return new Dictionary<Type, (int, int)>()
         {
-            { typeof(KingSlimeModel), (1, 2) },
+            { typeof(KingSlimeModel), (1, 1) },
         };
     }
 
