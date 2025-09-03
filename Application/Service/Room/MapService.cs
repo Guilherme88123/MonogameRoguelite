@@ -37,7 +37,7 @@ public class MapService : IMapService
     {
         var rooms = new BaseRoomModel[width, width];
         var roomsCount = 1;
-        int roomsNumber = (width * width) / 3;
+        int roomsNumber = 1;// (width * width) / 3;
 
         int middle = width / 2;
         rooms[middle, middle] = new InitialRoomModel();
