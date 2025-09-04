@@ -4,5 +4,6 @@ public enum MoveType
 {
     Idle,
     Patrol,
-    Chase
+    Chase,
+    SpecialAttack,
 }

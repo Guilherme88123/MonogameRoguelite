@@ -18,17 +18,21 @@ public class KingSlimeModel : BaseEnemyModel
     public float DelaySpecialAttack = 10f;
     public float DelaySpecialAttackAtual { get; set; }
 
+    public bool PlayerMarcado { get; set; } = false;
+    public Rectangle PlayerPostion { get; set; }
+
+    public bool FirstAttack { get; set; } = false;
+
     public KingSlimeModel((float x, float y) position) : base(position, 100)
     {
         Size = new Vector2(128, 128);
         Acceleration = 600f;
         Friction = 320f;
-        MaxSpeed = 120f;
+        MaxSpeed = 100f;
         Color = Color.DarkGreen;
         Name = "King Slime";
         MoveStatus = MoveType.Chase;
         DelaySpecialAttackAtual = 5f;
-        Health = 50;
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -47,42 +51,45 @@ public class KingSlimeModel : BaseEnemyModel
 
     private void SpecialAttack()
     {
-        var attk = new Random().Next(0, 4);
-
-        Stay();
-
-        if (Health <= MaxHealth * 0.5f)
+        if (!FirstAttack)
         {
-            if (attk == 0) SpawnMinions();
-            else if (attk == 1) JumpOnPlayer();
-            else ShootProjectiles();
+            JumpOnPlayer();
+            FirstAttack = true;
         }
-        else
-        {
-            if (attk == 0) JumpOnPlayer();
-            else ShootProjectiles();
-        }
+
+        var attk = new Random().Next(0, 3);
+
+        if (attk == 0) SpawnMinions();
+        else if (attk == 1) JumpOnPlayer();
+        else ShootProjectiles();
     }
 
     private async Task SpawnMinions()
     {
-        (int, int) position = new ((int)CenterPosition.X, (int)CenterPosition.Y);
+        (int, int) position = new((int)CenterPosition.X, (int)CenterPosition.Y);
 
         GlobalVariables.CurrentRoom.EntitiesToAdd.Add(new SlimeModel(position));
         await Task.Delay(500);
         GlobalVariables.CurrentRoom.EntitiesToAdd.Add(new SlimeModel(position));
     }
 
-    private void JumpOnPlayer()
+    private async Task JumpOnPlayer()
     {
-        Position = GlobalVariables.Player.Position;
-        //TODO: Implementar aviso ao player
+        PlayerPostion = new((int)(GlobalVariables.Player.CenterPosition.X - Size.X / 2),
+                            (int)(GlobalVariables.Player.CenterPosition.Y - Size.Y / 2),
+                            (int)Size.X,
+                            (int)Size.Y);
+
+        PlayerMarcado = true;
+
+        await Task.Delay(1200);
+
+        PlayerMarcado = false;
+        Position = new Vector2(PlayerPostion.X, PlayerPostion.Y);
     }
 
     private async Task ShootProjectiles()
     {
-        Speed = Vector2.Zero;
-
         (int, int) position = new((int)CenterPosition.X, (int)CenterPosition.Y);
 
         for (var i = 0; i < 8; i++)
@@ -90,7 +97,7 @@ public class KingSlimeModel : BaseEnemyModel
             if (i % 2 == 0) ShootBullets(12);
             else ShootBullets(12, MathF.PI / 12);
 
-            await Task.Delay(300);
+            await Task.Delay(250);
         }
     }
 
@@ -105,12 +112,6 @@ public class KingSlimeModel : BaseEnemyModel
 
             GlobalVariables.CurrentRoom.EntitiesToAdd.Add(new EnemyBulletModel(position, direction, this, 0.7f));
         }
-    }
-
-    private async Task Stay()
-    {
-        Speed = Vector2.Zero;
-        await Task.Delay(1000);
     }
 
     protected override Dictionary<Type, (int, int)> Drops()
@@ -145,5 +146,10 @@ public class KingSlimeModel : BaseEnemyModel
         var textNameSize = GlobalVariables.Font.MeasureString(textName);
 
         GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, textName, new Vector2(healthX + 5, healthY + healthHeight / 2 - textNameSize.Y / 2), Color.White);
+
+        if (PlayerMarcado)
+        {
+            GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, PlayerPostion, Color.Red * 0.5f);
+        }
     }
 }

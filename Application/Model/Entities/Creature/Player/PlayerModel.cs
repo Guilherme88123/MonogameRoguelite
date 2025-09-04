@@ -58,7 +58,7 @@ public class PlayerModel : BaseCreatureModel
         Level = 1;
         Size = new Vector2(48, 64);
 
-        Guns.Add(new PistolModel((0, 0)));
+        Guns.Add(new ShotgunModel((0, 0)));
         //Guns.Add(new SniperModel((0, 0)));
         //Guns.Add(new BazookaModel((0, 0)));
         //Guns[1].User = this;
@@ -239,6 +239,13 @@ public class PlayerModel : BaseCreatureModel
         }
 
         base.Colision(model);
+    }
+
+    protected override void HasDestroyed(GameTime gameTime, List<BaseEntityModel> entities)
+    {
+        base.HasDestroyed(gameTime, entities);
+
+        //GlobalVariables.Game.Exit();
     }
 
     public override void Draw()
