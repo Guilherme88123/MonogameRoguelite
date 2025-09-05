@@ -55,6 +55,8 @@ public class KingSlimeModel : BaseEnemyModel
         {
             JumpOnPlayer();
             FirstAttack = true;
+
+            return;
         }
 
         var attk = new Random().Next(0, 3);
