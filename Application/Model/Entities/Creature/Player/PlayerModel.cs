@@ -43,6 +43,8 @@ public class PlayerModel : BaseCreatureModel
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
+    public bool HasRicochetBullets { get; set; } = false;
+    public bool HasMugen { get; set; } = false;
 
     public List<BaseItemModel> Inventory { get; set; } = new();
     private bool IsInvOpen = false;
@@ -58,11 +60,11 @@ public class PlayerModel : BaseCreatureModel
         Level = 1;
         Size = new Vector2(48, 64);
 
+        Guns.Add(new PistolModel((0, 0)));
         Guns.Add(new ShotgunModel((0, 0)));
-        //Guns.Add(new SniperModel((0, 0)));
-        //Guns.Add(new BazookaModel((0, 0)));
-        //Guns[1].User = this;
-        //Guns[2].User = this;
+        Guns.Add(new BazookaModel((0, 0)));
+        Guns[1].User = this;
+        Guns[2].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
     }
@@ -251,14 +253,12 @@ public class PlayerModel : BaseCreatureModel
     public override void Draw()
     {
         base.Draw();
+
         if (EquippedGun != null) DrawGun();
 
-        DrawBar(0, MaxHealth, Health, Color.Red);
-        DrawBar(1, MaxXp, Xp, Color.Purple);
+        if (HasMugen) DrawMugen();
 
-        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Level: {Level}", new Vector2(10, 62), Color.White);
-
-        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Coins: {Coins}", new Vector2(10, 86), Color.White);
+        DrawGui();
 
         if (IsInvOpen) DrawInventory();
     }
@@ -340,5 +340,20 @@ public class PlayerModel : BaseCreatureModel
                 GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(gunX, gunY, gunWidth, gunHeight), gun.Color);
             }
         }
+    }
+
+    private void DrawGui()
+    {
+        DrawBar(0, MaxHealth, Health, Color.Red);
+        DrawBar(1, MaxXp, Xp, Color.Purple);
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Level: {Level}", new Vector2(10, 62), Color.White);
+        GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, $"Coins: {Coins}", new Vector2(10, 86), Color.White);
+    }
+
+    private void DrawMugen()
+    {
+        var mugenSize = Size.Y * 5;
+
+        GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, new Rectangle((int)(CenterPosition.X - mugenSize / 2), (int)(CenterPosition.Y - mugenSize / 2),(int)mugenSize, (int)mugenSize), Color.Purple * 0.3f);
     }
 }

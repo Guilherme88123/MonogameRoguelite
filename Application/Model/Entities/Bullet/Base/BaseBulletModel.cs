@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework;
+using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
 using System.Collections.Generic;
@@ -11,6 +13,8 @@ public class BaseBulletModel : BaseEntityModel
     public int Damage { get; set; } = 1;
     //public float GunDamageFactor { get; set; } = 1f;
     public float GunSpeedFactor { get; set; } = 1f;
+    public int QuantityRicochets { get; set; } = 0;
+    public int MaxQuantityRicochets { get; set; } = 3;
 
     public BaseBulletModel((int x, int y) position, Vector2 direction, BaseEntityModel sender, float gunSpeedFactor = 1f) : base(position)
     {
@@ -42,6 +46,27 @@ public class BaseBulletModel : BaseEntityModel
 
     public override void WallColision(WallModel model)
     {
-        Destroy();
+        if (GlobalVariables.Player.HasRicochetBullets && QuantityRicochets < MaxQuantityRicochets)
+        {
+            var rect = Rectangle;
+            var wallRect = model.Rectangle;
+
+            Rectangle.Intersect(ref rect, ref wallRect, out var intersection);
+
+            if (intersection.Width < intersection.Height)
+            {
+                Direction = new Vector2(-Direction.X, Direction.Y);
+            }
+            else
+            {
+                Direction = new Vector2(Direction.X, -Direction.Y);
+            }
+
+            QuantityRicochets += 1;
+        }
+        else
+        {
+            Destroy();
+        }
     }
 }
