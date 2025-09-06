@@ -9,11 +9,11 @@ public abstract class BaseItemModel : BaseCollectableModel
     {
     }
 
-    protected virtual void Apply()
+    public virtual void Apply()
     {
     }
 
-    protected virtual void Remove()
+    public virtual void Remove()
     {
     }
 }

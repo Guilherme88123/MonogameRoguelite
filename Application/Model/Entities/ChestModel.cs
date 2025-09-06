@@ -13,6 +13,9 @@ public class ChestModel : BaseEntityModel
     {
         Size = new Vector2(128, 48);
         Color = Color.SaddleBrown;
+
+        Position = new Vector2(GlobalVariables.CurrentRoom.Size.X / 2 - Size.X / 2,
+                               GlobalVariables.CurrentRoom.Size.Y / 2 - Size.Y / 2);
     }
 
     public override void Colision(BaseEntityModel model)

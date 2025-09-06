@@ -11,14 +11,16 @@ public class HeartCanisterModel : BaseItemModel
     public HeartCanisterModel((float x, float y) position) : base(position)
     {
         Rarity = RarityType.Common;
+        Color = Microsoft.Xna.Framework.Color.DarkRed;
+        Name = "Heart Canister";
     }
 
-    protected override void Apply()
+    public override void Apply()
     {
         GlobalVariables.Player.MaxHealth += QuantityExtraLife;
     }
 
-    protected override void Remove()
+    public override void Remove()
     {
         GlobalVariables.Player.MaxHealth -= QuantityExtraLife;
     }

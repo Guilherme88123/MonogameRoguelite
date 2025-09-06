@@ -11,15 +11,17 @@ public class SpeedyBootsModel : BaseItemModel
     public SpeedyBootsModel((float x, float y) position) : base(position)
     {
         Rarity = RarityType.Uncommon;
+        Color = Microsoft.Xna.Framework.Color.CadetBlue;
+        Name = "Speedy Boots";
     }
 
-    protected override void Apply()
+    public override void Apply()
     {
         GlobalVariables.Player.Acceleration += QuantintyExtraSpeed;
         GlobalVariables.Player.MaxSpeed += QuantintyExtraSpeed;
     }
 
-    protected override void Remove()
+    public override void Remove()
     {
         GlobalVariables.Player.Acceleration -= QuantintyExtraSpeed;
         GlobalVariables.Player.MaxSpeed -= QuantintyExtraSpeed;

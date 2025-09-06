@@ -74,8 +74,11 @@ public class Roguelite : Game
         var teclado = Keyboard.GetState();
         if (teclado.IsKeyDown(Keys.Escape) && EscDelayAtual < 0)
         {
-            GameStatus = GameStatus == GameStatusType.MainMenu ? GameStatusType.Playing : GameStatusType.MainMenu;
-            EscDelayAtual = EscDelay;
+            if (GlobalVariables.Player.IsInventoryOpen) 
+                GlobalVariables.Player.IsInventoryOpen = false;
+            else
+                GameStatus = GameStatus == GameStatusType.MainMenu ? GameStatusType.Playing : GameStatusType.MainMenu;
+                EscDelayAtual = EscDelay;
         }
             
         EscDelayAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;

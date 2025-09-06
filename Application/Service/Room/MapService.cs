@@ -187,6 +187,8 @@ public class MapService : IMapService
 
     private BaseRoomModel GetRandomRoom()
     {
+        return new ChestRoomModel();
+
         var x = Random.Next(13);
 
         return x switch

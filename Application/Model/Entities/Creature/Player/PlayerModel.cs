@@ -5,6 +5,7 @@ using Application.Model.Entities;
 using Application.Model.Entities.Collectable.Base;
 using Application.Model.Entities.Collectable.Gun;
 using Application.Model.Entities.Collectable.Gun.Base;
+using Application.Model.Entities.Collectable.Item;
 using Application.Model.Entities.Collectable.Item.Base;
 using Application.Model.Entities.Drop.Heart;
 using Microsoft.Xna.Framework;
@@ -18,6 +19,7 @@ using MonogameRoguelite.Model.Entities.Drop.Base;
 using MonogameRoguelite.Model.Entities.Drop.Coin;
 using MonogameRoguelite.Model.Entities.Drop.Xp;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
@@ -27,6 +29,8 @@ public class PlayerModel : BaseCreatureModel
     public int MaxXp { get; set; }
     public int Xp { get; set; }
     public int Level { get; set; }
+
+    #region Delays
 
     public const float DelayDano = 1f;
     public float DelayDanoAtual { get; set; }
@@ -40,14 +44,18 @@ public class PlayerModel : BaseCreatureModel
     public const float DelayDropGun = 0.3f;
     public float DelayDropGunAtual { get; set; }
 
+    #endregion
+
+    #region Guns
+
     public int MaxGuns = 3;
     public List<BaseGunModel> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
-    public bool HasRicochetBullets { get; set; } = false;
-    public bool HasMugen { get; set; } = false;
+
+    #endregion
 
     public List<BaseItemModel> Inventory { get; set; } = new();
-    private bool IsInvOpen = false;
+    public bool IsInventoryOpen = false;
 
     public PlayerModel((int x, int y) position) : base(position, maxHealth: 5)
     {
@@ -67,6 +75,12 @@ public class PlayerModel : BaseCreatureModel
         Guns[2].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
+
+        for (int i = 0; i < 30; i++)
+        {
+            var item = new RubberBulletsModel((0, 0));
+            Inventory.Add(item);
+        }
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -127,7 +141,7 @@ public class PlayerModel : BaseCreatureModel
 
         if (teclado.IsKeyDown(Keys.E) && DelayInvAtual < 0)
         {
-            IsInvOpen = !IsInvOpen;
+            IsInventoryOpen = !IsInventoryOpen;
             DelayInvAtual = DelayInv;
         }
 
@@ -185,6 +199,7 @@ public class PlayerModel : BaseCreatureModel
             else if (colec is BaseItemModel item)
             {
                 Inventory.Add(item);
+                item.Apply();
                 item.Destroy();
             }
         }
@@ -256,11 +271,11 @@ public class PlayerModel : BaseCreatureModel
 
         if (EquippedGun != null) DrawGun();
 
-        if (HasMugen) DrawMugen();
+        if (Inventory.Any(x => x is MugenModel)) DrawMugen();
 
         DrawGui();
 
-        if (IsInvOpen) DrawInventory();
+        if (IsInventoryOpen) DrawInventory();
     }
 
     private void DrawBar(int count, int max, int current, Color color)
@@ -298,6 +313,8 @@ public class PlayerModel : BaseCreatureModel
 
     private void DrawInventory()
     {
+        var itemSize = 128;
+        var itemSpace = 12;
         var menuColor = Color.DarkGray * 0.9f;
 
         var width = (int)(GlobalVariables.Graphics.PreferredBackBufferWidth / 1.2);
@@ -305,13 +322,20 @@ public class PlayerModel : BaseCreatureModel
         var x = (GlobalVariables.Graphics.PreferredBackBufferWidth / 2) - (width / 2);
         var y = 10;
         GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, height), menuColor);
+         
+        var quantityPerLine = width / (itemSize + itemSpace);
+        var quantityPerColumn = height / (itemSize + itemSpace);
 
         for (var i = 0; i < Inventory.Count; i++)
         {
             var item = Inventory[i];
-            var itemX = x + 20 + (i % 5) * 70;
-            var itemY = y + 20 + (i / 5) * 70;
-            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(itemX, itemY, 64, 64), item.Color);
+            var itemX = x + 35 + (i % quantityPerLine) * (itemSize + itemSpace);
+            var itemY = y + 35 + (i / quantityPerLine) * (itemSize + itemSpace);
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(itemX, itemY, itemSize, itemSize), item.Color);
+
+            var textNameSize = GlobalVariables.Font.MeasureString(item.Name);
+
+            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, item.Name, new Vector2(itemX + itemSize / 2 - textNameSize.X / 2, itemY + itemSpace), Color.White);
         }
 
         var gunInvWidth = width / 3 - 10;

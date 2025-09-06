@@ -1,9 +1,12 @@
-﻿using Microsoft.VisualBasic;
+﻿using Application.Model.Entities.Collectable.Item;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
+using MonogameRoguelite.Model.Entities.Creature.Player;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Application.Model.Entities.Bullet.Base;
 
@@ -46,7 +49,9 @@ public class BaseBulletModel : BaseEntityModel
 
     public override void WallColision(WallModel model)
     {
-        if (GlobalVariables.Player.HasRicochetBullets && QuantityRicochets < MaxQuantityRicochets)
+        if (Sender is PlayerModel && 
+            GlobalVariables.Player.Inventory.Any(x => x is RubberBulletsModel) && 
+            QuantityRicochets < MaxQuantityRicochets)
         {
             var rect = Rectangle;
             var wallRect = model.Rectangle;
@@ -54,15 +59,11 @@ public class BaseBulletModel : BaseEntityModel
             Rectangle.Intersect(ref rect, ref wallRect, out var intersection);
 
             if (intersection.Width < intersection.Height)
-            {
                 Direction = new Vector2(-Direction.X, Direction.Y);
-            }
             else
-            {
                 Direction = new Vector2(Direction.X, -Direction.Y);
-            }
 
-            QuantityRicochets += 1;
+            QuantityRicochets++;
         }
         else
         {
