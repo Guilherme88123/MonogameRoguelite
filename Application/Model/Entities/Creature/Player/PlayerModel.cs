@@ -55,7 +55,10 @@ public class PlayerModel : BaseCreatureModel
     #endregion
 
     public List<BaseItemModel> Inventory { get; set; } = new();
+    public BaseItemModel DraggingItem { get; set; } = null;
+    public Vector2 DraggingOffset { get; set; }
     public bool IsInventoryOpen = false;
+    public Rectangle InvRectangle { get; set; } = Rectangle.Empty;
 
     public PlayerModel((int x, int y) position) : base(position, maxHealth: 5)
     {
@@ -134,7 +137,7 @@ public class PlayerModel : BaseCreatureModel
         var mouseCamera = Vector2.Transform(new Vector2(mouse.X, mouse.Y), Matrix.Invert(camera.Transform));
         TargetDirection = mouseCamera - Position;
 
-        if (mouse.LeftButton == ButtonState.Pressed && EquippedGun != null)
+        if (mouse.LeftButton == ButtonState.Pressed && EquippedGun != null && !IsInventoryOpen)
         {
             EquippedGun.Shoot();
         }
@@ -173,6 +176,49 @@ public class PlayerModel : BaseCreatureModel
         }
 
         #endregion
+
+        #region Drag Items
+
+        if (mouse.LeftButton == ButtonState.Pressed)
+        {
+            if (DraggingItem == null) // ainda não estou arrastando
+            {
+                foreach (var item in Inventory)
+                {
+                    var rect = new Rectangle((int)item.Position.X, (int)item.Position.Y, (int)item.Size.X, (int)item.Size.Y);
+                    if (rect.Contains(mouse.Position))
+                    {
+                        DraggingItem = item;
+                        DraggingOffset = item.Position - mouse.Position.ToVector2();
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Atualiza posição do item com o mouse
+                DraggingItem.Position = mouse.Position.ToVector2() + DraggingOffset;
+            }
+        }
+        else if (mouse.LeftButton == ButtonState.Released && DraggingItem != null)
+        {
+            if (InvRectangle != Rectangle.Empty && !InvRectangle.Contains(mouse.Position.ToVector2()))
+            {
+                DraggingItem.Size = new(64, 64);
+                DraggingItem.IsDestroyed = false;
+                DraggingItem.Position = CenterPosition - DraggingItem.Size / 2;
+                DraggingItem.Speed += new Vector2(1, 1);
+                DraggingItem.Direction = TargetDirection;
+
+                Inventory.Remove(DraggingItem);
+                DraggingItem.Remove();
+                entities.Add(DraggingItem);
+            }
+
+            DraggingItem = null;
+        }
+
+        #endregion 
 
         base.Update(gameTime, entities);
     }
@@ -321,7 +367,10 @@ public class PlayerModel : BaseCreatureModel
         var height = (int)(GlobalVariables.Graphics.PreferredBackBufferHeight / 1.5);
         var x = (GlobalVariables.Graphics.PreferredBackBufferWidth / 2) - (width / 2);
         var y = 10;
-        GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(x, y, width, height), menuColor);
+
+        InvRectangle = new Rectangle(x, y, width, height);
+
+        GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, InvRectangle, menuColor);
          
         var quantityPerLine = width / (itemSize + itemSpace);
         var quantityPerColumn = height / (itemSize + itemSpace);
@@ -329,13 +378,27 @@ public class PlayerModel : BaseCreatureModel
         for (var i = 0; i < Inventory.Count; i++)
         {
             var item = Inventory[i];
+
+            if (DraggingItem != null && item == DraggingItem) continue;
+
             var itemX = x + 35 + (i % quantityPerLine) * (itemSize + itemSpace);
             var itemY = y + 35 + (i / quantityPerLine) * (itemSize + itemSpace);
-            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(itemX, itemY, itemSize, itemSize), item.Color);
+
+            item.Position = new(itemX, itemY);
+            item.Size = new(itemSize, itemSize);
+
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, item.Rectangle, item.Color);
 
             var textNameSize = GlobalVariables.Font.MeasureString(item.Name);
 
             GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, item.Name, new Vector2(itemX + itemSize / 2 - textNameSize.X / 2, itemY + itemSpace), Color.White);
+        }
+
+        if (DraggingItem != null)
+        {
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, DraggingItem.Rectangle, DraggingItem.Color);
+            var textNameSize = GlobalVariables.Font.MeasureString(DraggingItem.Name);
+            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, DraggingItem.Name, new Vector2(DraggingItem.Position.X + itemSize / 2 - textNameSize.X / 2, DraggingItem.Position.Y + itemSpace), Color.White);
         }
 
         var gunInvWidth = width / 3 - 10;
