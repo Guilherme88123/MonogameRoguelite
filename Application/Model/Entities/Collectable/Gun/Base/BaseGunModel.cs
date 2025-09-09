@@ -1,11 +1,14 @@
 ﻿using Application.Infrastructure;
 using Application.Model.Entities.Collectable.Base;
+using Application.Model.Entities.Collectable.Item;
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Entities.Base;
 using MonogameRoguelite.Model.Entities.Creature.Base;
+using MonogameRoguelite.Model.Entities.Creature.Player;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Application.Model.Entities.Collectable.Gun.Base;
 
@@ -32,13 +35,17 @@ public abstract class BaseGunModel : BaseCollectableModel
 
         foreach (var entityType in bullets)
         {
-            if (entityType.Value == 1)
+            var qtBullets = entityType.Value;
+
+            if (User is PlayerModel player && player.Inventory.Any(x => x is TwinsBulletModel)) qtBullets *= 2;
+
+            if (qtBullets == 1)
             {
                 CreateBullet(entityType.Key);
             }
             else
             {
-                for (int i = 0; i < entityType.Value; i++)
+                for (int i = 0; i < qtBullets; i++)
                 {
                     float spread = MathHelper.ToRadians(10f);
 

@@ -81,7 +81,7 @@ public class PlayerModel : BaseCreatureModel
 
         for (int i = 0; i < 30; i++)
         {
-            var item = new RubberBulletsModel((0, 0));
+            var item = new TwinsBulletModel((0, 0));
             Inventory.Add(item);
         }
     }
