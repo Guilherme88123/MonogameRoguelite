@@ -72,18 +72,8 @@ public class PlayerModel : BaseCreatureModel
         Size = new Vector2(48, 64);
 
         Guns.Add(new PistolModel((0, 0)));
-        Guns.Add(new ShotgunModel((0, 0)));
-        Guns.Add(new BazookaModel((0, 0)));
-        Guns[1].User = this;
-        Guns[2].User = this;
         EquippedGun = Guns[0];
         EquippedGun.User = this;
-
-        for (int i = 0; i < 30; i++)
-        {
-            var item = new TwinsBulletModel((0, 0));
-            Inventory.Add(item);
-        }
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)

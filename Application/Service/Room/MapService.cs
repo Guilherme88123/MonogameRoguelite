@@ -9,6 +9,8 @@ using MonogameRoguelite.Model.Room.Base;
 using MonogameRoguelite.Model.Room.Boss;
 using MonogameRoguelite.Model.Room.Initial;
 using Application.Model.Room;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MonogameRoguelite.Service.Room;
 
@@ -46,11 +48,11 @@ public class MapService : IMapService
         GlobalVariables.CurrentRoom.Visited = true;
         GlobalVariables.CurrentRoom.OnRoomEnter();
 
-        int oldX = middle;
-        int oldY = middle;
-
         while (roomsCount <= roomsNumber)
         {
+            var allRooms = GetAllRoomsList(rooms);
+            var (oldX, oldY) = allRooms[Random.Next(allRooms.Count)];
+
             var (actualX, actualY, direc) = GetNextPosition(oldX, oldY, width);
 
             if (rooms[actualX, actualY] != null) continue;
@@ -64,13 +66,13 @@ public class MapService : IMapService
                 BaseRoomModel newRoom = GetRandomRoom();
 
                 rooms[actualX, actualY] = newRoom;
-                if (roomsCount == 1) newRoom.Visited = true;
+                if (oldX == middle && oldY == middle) newRoom.Visited = true;
             }
 
             roomsCount++;
 
             rooms[oldX, oldY].Entities.Add(new DoorModel(direc, rooms[oldX, oldY]));
-            rooms[oldX, oldY].NextRoomPosition = new Vector2(actualX, actualY);
+            rooms[oldX, oldY].NextRoomPosition.Add(new Vector2(actualX, actualY));
             rooms[actualX, actualY].Entities.Add(new DoorModel(GetAgainstDirection(direc), rooms[actualX, actualY]));
             (oldX, oldY) = (actualX, actualY);
         }
@@ -142,7 +144,13 @@ public class MapService : IMapService
         GlobalVariables.CurrentRoom.Entities.Add(player);
         GlobalVariables.CurrentRoom.Visited = true;
         GlobalVariables.CurrentRoom.OnRoomEnter();
-        if (GlobalVariables.CurrentRoom.NextRoomPosition != Vector2.Zero) Rooms[(int)GlobalVariables.CurrentRoom.NextRoomPosition.X, (int)GlobalVariables.CurrentRoom.NextRoomPosition.Y].Visited = true;
+        if (GlobalVariables.CurrentRoom.NextRoomPosition.Any())
+        {
+            foreach (var pos in GlobalVariables.CurrentRoom.NextRoomPosition)
+            {
+                Rooms[(int)pos.X, (int)pos.Y].Visited = true;
+            }
+        }
     }
 
     public void DrawMap()
@@ -187,17 +195,15 @@ public class MapService : IMapService
 
     private BaseRoomModel GetRandomRoom()
     {
-        return new ChestRoomModel();
-
-        var x = Random.Next(13);
+        var x = Random.Next(11 + 1);
 
         return x switch
         {
             _ when 0 >= x && x <= 3 => new EasyRoomModel(),
             _ when 4 >= x && x <= 6 => new MediumRoomModel(),
             _ when 7 >= x && x <= 9 => new HardRoomModel(),
-            _ when 10 >= x && x <= 11 => new ChestRoomModel(),
-            _ when x >= 12 => new MercantRoomModel(),
+            _ when 10 >= x && x <= 10 => new ChestRoomModel(),
+            _ when 11 >= x && x <= 11 => new MercantRoomModel(),
             _ => new EasyRoomModel()
         };
     }
@@ -211,5 +217,21 @@ public class MapService : IMapService
         GlobalVariables.CurrentRoom.Entities.Add(GlobalVariables.Player);
 
         GlobalVariables.Player.Position = new((int)GlobalVariables.CurrentRoom.Size.X / 2, (int)GlobalVariables.CurrentRoom.Size.Y / 2);
+    }
+
+    private List<(int, int)> GetAllRoomsList(BaseRoomModel[,] rooms)
+    {
+        var allRooms = new List<(int x, int y)>();
+
+        for (int i = 0; i < rooms.GetLength(0); i++)
+        {
+            for (int j = 0; j < rooms.GetLength(1); j++)
+            {
+                if (rooms[i, j] != null)
+                    allRooms.Add((i, j));
+            }
+        }
+
+        return allRooms;
     }
 }
