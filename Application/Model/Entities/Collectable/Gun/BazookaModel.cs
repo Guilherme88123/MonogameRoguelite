@@ -14,6 +14,7 @@ public class BazookaModel : BaseGunModel
         Delay = 2.3f;
         Color = Microsoft.Xna.Framework.Color.OrangeRed;
         Rarity = RarityType.Secret;
+        Name = "Bazooka";
     }
 
     protected override Dictionary<Type, int> Bullets()

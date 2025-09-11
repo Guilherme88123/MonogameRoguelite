@@ -13,6 +13,7 @@ public class EnemyGunModel : BaseGunModel
         Delay = 2f;
         Size = new(32, 12);
         Color = Color.DarkSlateGray;
+        Name = "Enemy Gun";
     }
 
     protected override Dictionary<Type, int> Bullets()

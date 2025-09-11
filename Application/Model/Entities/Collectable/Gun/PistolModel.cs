@@ -12,6 +12,7 @@ public class PistolModel : BaseGunModel
     {
         Size = new(32, 8);
         Color = Color.Black;
+        Name = "Pistol";
     }
 
     protected override Dictionary<Type, int> Bullets()

@@ -15,6 +15,7 @@ public class MachineGunModel : BaseGunModel
         Color = Microsoft.Xna.Framework.Color.Gray;
         Rarity = RarityType.Legendary;
         BulletSpeedFactor = 0.8f;
+        Name = "Machine Gun";
     }
 
     protected override Dictionary<Type, int> Bullets()

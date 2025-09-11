@@ -14,6 +14,7 @@ public class RifleModel : BaseGunModel
         Delay = 0.35f;
         Color = Microsoft.Xna.Framework.Color.Firebrick;
         Rarity = RarityType.Uncommon;
+        Name = "Rifle";
     }
 
     protected override Dictionary<Type, int> Bullets()

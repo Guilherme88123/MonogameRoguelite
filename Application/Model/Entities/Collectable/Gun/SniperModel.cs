@@ -14,6 +14,7 @@ public class SniperModel : BaseGunModel
         Delay = 1.5f;
         Color = Microsoft.Xna.Framework.Color.MediumPurple;
         Rarity = RarityType.Mythic;
+        Name = "Sniper";
     }
 
     protected override Dictionary<Type, int> Bullets()

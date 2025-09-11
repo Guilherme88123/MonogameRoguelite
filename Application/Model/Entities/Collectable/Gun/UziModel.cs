@@ -15,6 +15,7 @@ public class UziModel : BaseGunModel
         Color = Microsoft.Xna.Framework.Color.DarkBlue;
         Rarity = RarityType.Rare;
         BulletSpeedFactor = 0.6f;
+        Name = "Uzi";
     }
 
     protected override Dictionary<Type, int> Bullets()

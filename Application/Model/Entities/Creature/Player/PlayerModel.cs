@@ -49,13 +49,13 @@ public class PlayerModel : BaseCreatureModel
     #region Guns
 
     public int MaxGuns = 3;
-    public List<BaseGunModel> Guns { get; set; } = new();
+    public List<(BaseGunModel Gun, Rectangle Rectangle)> Guns { get; set; } = new();
     public BaseGunModel EquippedGun { get; set; }
 
     #endregion
 
-    public List<BaseItemModel> Inventory { get; set; } = new();
-    public BaseItemModel DraggingItem { get; set; } = null;
+    public List<(BaseItemModel Item, Rectangle Rectangle)> Inventory { get; set; } = new();
+    public (BaseCollectableModel Collectable, Rectangle Rectangle) DraggingItem { get; set; } = (null, Rectangle.Empty);
     public Vector2 DraggingOffset { get; set; }
     public bool IsInventoryOpen = false;
     public Rectangle InvRectangle { get; set; } = Rectangle.Empty;
@@ -71,9 +71,11 @@ public class PlayerModel : BaseCreatureModel
         Level = 1;
         Size = new Vector2(48, 64);
 
-        Guns.Add(new PistolModel((0, 0)));
-        EquippedGun = Guns[0];
+        Guns.Add((new PistolModel((0, 0)), Rectangle.Empty));
+        EquippedGun = Guns[0].Gun;
         EquippedGun.User = this;
+
+        Inventory.Add((new HeartCanisterModel((0, 0)), Rectangle.Empty));
     }
 
     public override void Update(GameTime gameTime, List<BaseEntityModel> entities)
@@ -146,23 +148,7 @@ public class PlayerModel : BaseCreatureModel
 
         if (teclado.IsKeyDown(Keys.Q) && DelayDropGunAtual < 0 && EquippedGun != null)
         {
-            var gunToDrop = EquippedGun;
-
-            gunToDrop.IsDestroyed = false;
-            gunToDrop.User = null;
-            gunToDrop.Position = CenterPosition - gunToDrop.Size / 2;
-            gunToDrop.Speed += new Vector2(1, 1);
-            gunToDrop.Direction = TargetDirection;
-
-            if (Guns.Count == 1)
-                EquippedGun = null;
-            else
-                ChangeGun();
-
-            Guns.Remove(gunToDrop);
-            entities.Add(gunToDrop);
-
-            DelayDropGunAtual = DelayDropGun;
+            DropGun(EquippedGun, entities);
         }
 
         #endregion
@@ -171,15 +157,23 @@ public class PlayerModel : BaseCreatureModel
 
         if (mouse.LeftButton == ButtonState.Pressed)
         {
-            if (DraggingItem == null) // ainda não estou arrastando
+            if (DraggingItem.Collectable == null) // ainda não estou arrastando
             {
                 foreach (var item in Inventory)
                 {
-                    var rect = new Rectangle((int)item.Position.X, (int)item.Position.Y, (int)item.Size.X, (int)item.Size.Y);
-                    if (rect.Contains(mouse.Position))
+                    if (item.Rectangle.Contains(mouse.Position))
                     {
                         DraggingItem = item;
-                        DraggingOffset = item.Position - mouse.Position.ToVector2();
+                        DraggingOffset = new Vector2(item.Rectangle.X, item.Rectangle.Y) - mouse.Position.ToVector2();
+                        break;
+                    }
+                }
+                foreach (var gun in Guns)
+                {
+                    if (gun.Rectangle.Contains(mouse.Position))
+                    {
+                        DraggingItem = gun;
+                        DraggingOffset = new Vector2(gun.Rectangle.X, gun.Rectangle.Y) - mouse.Position.ToVector2();
                         break;
                     }
                 }
@@ -187,25 +181,31 @@ public class PlayerModel : BaseCreatureModel
             else
             {
                 // Atualiza posição do item com o mouse
-                DraggingItem.Position = mouse.Position.ToVector2() + DraggingOffset;
+                DraggingItem.Collectable.Position = mouse.Position.ToVector2() + DraggingOffset;
             }
         }
-        else if (mouse.LeftButton == ButtonState.Released && DraggingItem != null)
+        else if (mouse.LeftButton == ButtonState.Released && DraggingItem.Collectable != null)
         {
             if (InvRectangle != Rectangle.Empty && !InvRectangle.Contains(mouse.Position.ToVector2()))
             {
-                DraggingItem.Size = new(64, 64);
-                DraggingItem.IsDestroyed = false;
-                DraggingItem.Position = CenterPosition - DraggingItem.Size / 2;
-                DraggingItem.Speed += new Vector2(1, 1);
-                DraggingItem.Direction = TargetDirection;
+                DraggingItem.Collectable.IsDestroyed = false;
+                DraggingItem.Collectable.Position = CenterPosition - DraggingItem.Collectable.Size / 2;
+                DraggingItem.Collectable.Speed += new Vector2(1, 1);
+                DraggingItem.Collectable.Direction = TargetDirection;
 
-                Inventory.Remove(DraggingItem);
-                DraggingItem.Remove();
-                entities.Add(DraggingItem);
+                if (DraggingItem.Collectable is BaseItemModel item)
+                {
+                    Inventory.RemoveAll(x => x.Item == item);
+                    item.Remove();
+                    entities.Add(item);
+                }
+                else if (DraggingItem.Collectable is BaseGunModel gun)
+                {
+                    DropGun(gun, entities);
+                }
             }
 
-            DraggingItem = null;
+            DraggingItem = (null, Rectangle.Empty);
         }
 
         #endregion 
@@ -213,11 +213,30 @@ public class PlayerModel : BaseCreatureModel
         base.Update(gameTime, entities);
     }
 
+    private void DropGun(BaseGunModel gunToDrop, List<BaseEntityModel> entities)
+    {
+        gunToDrop.IsDestroyed = false;
+        gunToDrop.User = null;
+        gunToDrop.Position = CenterPosition - gunToDrop.Size / 2;
+        gunToDrop.Speed += new Vector2(1, 1);
+        gunToDrop.Direction = TargetDirection;
+
+        if (Guns.Count == 1)
+            EquippedGun = null;
+        else
+            ChangeGun();
+
+        Guns.RemoveAll(x => x.Gun == gunToDrop);
+        entities.Add(gunToDrop);
+
+        DelayDropGunAtual = DelayDropGun;
+    }
+
     private void ChangeGun()
     {
         if (Guns.Count <= 1) return;
-        var idx = Guns.IndexOf(EquippedGun);
-        EquippedGun = Guns[(idx + 1) % Guns.Count];
+        var idx = Guns.Select(x => x.Gun).ToList().IndexOf(EquippedGun);
+        EquippedGun = Guns[(idx + 1) % Guns.Count].Gun;
     }
 
     public override void Colision(BaseEntityModel model)
@@ -226,7 +245,7 @@ public class PlayerModel : BaseCreatureModel
         {
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {
-                Guns.Add(gun);
+                Guns.Add((gun, Rectangle.Empty));
                 gun.User = this;
                 gun.Destroy();
 
@@ -234,7 +253,7 @@ public class PlayerModel : BaseCreatureModel
             }
             else if (colec is BaseItemModel item)
             {
-                Inventory.Add(item);
+                Inventory.Add((item, Rectangle.Empty));
                 item.Apply();
                 item.Destroy();
             }
@@ -294,20 +313,13 @@ public class PlayerModel : BaseCreatureModel
         base.Colision(model);
     }
 
-    protected override void HasDestroyed(GameTime gameTime, List<BaseEntityModel> entities)
-    {
-        base.HasDestroyed(gameTime, entities);
-
-        //GlobalVariables.Game.Exit();
-    }
-
     public override void Draw()
     {
         base.Draw();
 
         if (EquippedGun != null) DrawGun();
 
-        if (Inventory.Any(x => x is MugenModel)) DrawMugen();
+        if (Inventory.Any(x => x.Item is MugenModel)) DrawMugen();
 
         DrawGui();
 
@@ -369,26 +381,19 @@ public class PlayerModel : BaseCreatureModel
         {
             var item = Inventory[i];
 
-            if (DraggingItem != null && item == DraggingItem) continue;
+            if (DraggingItem.Collectable != null && item.Item == DraggingItem.Collectable) continue;
 
             var itemX = x + 35 + (i % quantityPerLine) * (itemSize + itemSpace);
             var itemY = y + 35 + (i / quantityPerLine) * (itemSize + itemSpace);
 
-            item.Position = new(itemX, itemY);
-            item.Size = new(itemSize, itemSize);
+            item.Rectangle = new(itemX, itemY, itemSize, itemSize);
+            Inventory[i] = item;
 
-            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, item.Rectangle, item.Color);
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, item.Rectangle, item.Item.Color);
 
-            var textNameSize = GlobalVariables.Font.MeasureString(item.Name);
+            var textNameSize = GlobalVariables.Font.MeasureString(item.Item.Name);
 
-            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, item.Name, new Vector2(itemX + itemSize / 2 - textNameSize.X / 2, itemY + itemSpace), Color.White);
-        }
-
-        if (DraggingItem != null)
-        {
-            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, DraggingItem.Rectangle, DraggingItem.Color);
-            var textNameSize = GlobalVariables.Font.MeasureString(DraggingItem.Name);
-            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, DraggingItem.Name, new Vector2(DraggingItem.Position.X + itemSize / 2 - textNameSize.X / 2, DraggingItem.Position.Y + itemSpace), Color.White);
+            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, item.Item.Name, new Vector2(itemX + itemSize / 2 - textNameSize.X / 2, itemY + itemSpace), Color.White);
         }
 
         var gunInvWidth = width / 3 - 10;
@@ -400,22 +405,35 @@ public class PlayerModel : BaseCreatureModel
             var gunInvX = x + i * (gunInvWidth + 15);
 
             var gunInvRect = new Rectangle(gunInvX, gunInvY, gunInvWidth, gunInvHeight);
+
             GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRect, menuColor);
 
             if (i < Guns.Count)
             {
+                if (DraggingItem.Collectable != null && Guns[i].Gun == DraggingItem.Collectable) continue;
+
                 var gun = Guns[i];
 
                 var gunInvRarityRect = new Rectangle(gunInvX + 10, gunInvY + 10, gunInvWidth - 20, gunInvHeight - 20);
-                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Rarity) * 0.8f);
 
-                var gunWidth = (int)gun.Size.X * 2;
-                var gunHeight = (int)gun.Size.Y * 2;
+                Guns[i] = (Guns[i].Gun, gunInvRarityRect);
+
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Gun.Rarity) * 0.8f);
+
+                var gunWidth = (int)gun.Gun.Size.X * 2;
+                var gunHeight = (int)gun.Gun.Size.Y * 2;
                 var gunX = gunInvX + gunInvWidth / 2 - gunWidth / 2;
                 var gunY = gunInvY + gunInvHeight / 2 - gunHeight / 2;
 
-                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(gunX, gunY, gunWidth, gunHeight), gun.Color);
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(gunX, gunY, gunWidth, gunHeight), gun.Gun.Color);
             }
+        }
+
+        if (DraggingItem.Collectable != null)
+        {
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, DraggingItem.Rectangle, DraggingItem.Collectable.Color);
+            var textNameSize = GlobalVariables.Font.MeasureString(DraggingItem.Collectable.Name);
+            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, DraggingItem.Collectable.Name, new Vector2(DraggingItem.Collectable.Position.X + itemSize / 2 - textNameSize.X / 2, DraggingItem.Collectable.Position.Y + itemSpace), Color.White);
         }
     }
 
