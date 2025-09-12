@@ -49,7 +49,7 @@ public static class RngHelper
     {
         return rarity switch
         {
-            RarityType.Common => new Color(255, 255, 255),
+            RarityType.Common => new Color(128, 128, 128),
             RarityType.Uncommon => new Color(0, 255, 0),
             RarityType.Rare => new Color(0, 0, 255),
             RarityType.Epic => new Color(215, 40, 255),

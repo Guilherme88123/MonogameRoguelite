@@ -41,9 +41,6 @@ public class PlayerModel : BaseCreatureModel
     public const float DelayChangeGun = 0.3f;
     public float DelayChangeGunAtual { get; set; }
 
-    public const float DelayDropGun = 0.3f;
-    public float DelayDropGunAtual { get; set; }
-
     #endregion
 
     #region Guns
@@ -92,7 +89,6 @@ public class PlayerModel : BaseCreatureModel
         DelayDanoAtual -= delta;
         DelayInvAtual -= delta;
         DelayChangeGunAtual -= delta;
-        DelayDropGunAtual -= delta;
 
         #endregion 
 
@@ -146,11 +142,6 @@ public class PlayerModel : BaseCreatureModel
             DelayChangeGunAtual = DelayChangeGun;
         }
 
-        if (teclado.IsKeyDown(Keys.Q) && DelayDropGunAtual < 0 && EquippedGun != null)
-        {
-            DropGun(EquippedGun, entities);
-        }
-
         #endregion
 
         #region Drag Items
@@ -181,7 +172,8 @@ public class PlayerModel : BaseCreatureModel
             else
             {
                 // Atualiza posição do item com o mouse
-                DraggingItem.Collectable.Position = mouse.Position.ToVector2() + DraggingOffset;
+                var newPos = mouse.Position.ToVector2() + DraggingOffset;
+                DraggingItem = (DraggingItem.Collectable, new Rectangle((int)newPos.X, (int)newPos.Y, DraggingItem.Rectangle.Width, DraggingItem.Rectangle.Height));
             }
         }
         else if (mouse.LeftButton == ButtonState.Released && DraggingItem.Collectable != null)
@@ -228,8 +220,6 @@ public class PlayerModel : BaseCreatureModel
 
         Guns.RemoveAll(x => x.Gun == gunToDrop);
         entities.Add(gunToDrop);
-
-        DelayDropGunAtual = DelayDropGun;
     }
 
     private void ChangeGun()
@@ -370,7 +360,7 @@ public class PlayerModel : BaseCreatureModel
         var x = (GlobalVariables.Graphics.PreferredBackBufferWidth / 2) - (width / 2);
         var y = 10;
 
-        InvRectangle = new Rectangle(x, y, width, height);
+        InvRectangle = new Rectangle(x, y, width, height + height / 3);
 
         GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, InvRectangle, menuColor);
          
@@ -404,9 +394,9 @@ public class PlayerModel : BaseCreatureModel
         {
             var gunInvX = x + i * (gunInvWidth + 15);
 
-            var gunInvRect = new Rectangle(gunInvX, gunInvY, gunInvWidth, gunInvHeight);
+            var gunInvLabelRect = new Rectangle(gunInvX, gunInvY, gunInvWidth, gunInvHeight);
 
-            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRect, menuColor);
+            GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvLabelRect, menuColor);
 
             if (i < Guns.Count)
             {
@@ -416,24 +406,28 @@ public class PlayerModel : BaseCreatureModel
 
                 var gunInvRarityRect = new Rectangle(gunInvX + 10, gunInvY + 10, gunInvWidth - 20, gunInvHeight - 20);
 
-                Guns[i] = (Guns[i].Gun, gunInvRarityRect);
-
                 GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRarityRect, RngHelper.GetRarityColor(gun.Gun.Rarity) * 0.8f);
 
-                var gunWidth = (int)gun.Gun.Size.X * 2;
-                var gunHeight = (int)gun.Gun.Size.Y * 2;
+                var gunWidth = (int)gun.Gun.Size.X * 3;
+                var gunHeight = (int)gun.Gun.Size.Y * 3;
                 var gunX = gunInvX + gunInvWidth / 2 - gunWidth / 2;
                 var gunY = gunInvY + gunInvHeight / 2 - gunHeight / 2;
 
-                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, new Rectangle(gunX, gunY, gunWidth, gunHeight), gun.Gun.Color);
+                var gunInvRect = new Rectangle(gunX, gunY, gunWidth, gunHeight);
+
+                Guns[i] = (Guns[i].Gun, gunInvRect);
+
+                GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRect, gun.Gun.Color);
+
+                var textNameSize = GlobalVariables.Font.MeasureString(gun.Gun.Name);
+
+                GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, gun.Gun.Name, new Vector2(gunInvLabelRect.X + gunInvLabelRect.Width / 2 - textNameSize.X / 2, gunInvLabelRect.Y + itemSpace * 2), Color.White);
             }
         }
 
         if (DraggingItem.Collectable != null)
         {
             GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, DraggingItem.Rectangle, DraggingItem.Collectable.Color);
-            var textNameSize = GlobalVariables.Font.MeasureString(DraggingItem.Collectable.Name);
-            GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, DraggingItem.Collectable.Name, new Vector2(DraggingItem.Collectable.Position.X + itemSize / 2 - textNameSize.X / 2, DraggingItem.Collectable.Position.Y + itemSpace), Color.White);
         }
     }
 
