@@ -69,7 +69,9 @@ public class PlayerModel : BaseCreatureModel
         Size = new Vector2(48, 64);
 
         Guns.Add((new PistolModel((0, 0)), Rectangle.Empty));
-        EquippedGun = Guns[0].Gun;
+        EquippedGun = Guns[0].Gun; 
+        Guns.Add((new PistolModel((0, 0)), Rectangle.Empty));
+        Guns[1].Gun.User = this;
         EquippedGun.User = this;
 
         Inventory.Add((new HeartCanisterModel((0, 0)), Rectangle.Empty));
@@ -191,9 +193,33 @@ public class PlayerModel : BaseCreatureModel
                     item.Remove();
                     entities.Add(item);
                 }
-                else if (DraggingItem.Collectable is BaseGunModel gun)
+                else if (DraggingItem.Collectable is BaseGunModel gunToDrop)
                 {
-                    DropGun(gun, entities);
+                    DropGun(gunToDrop, entities);
+                }
+            }
+
+            if (DraggingItem.Collectable is BaseGunModel gun)
+            {
+                for (var i = 0; i < Guns.Count; i++)
+                {
+                    var otherGun = Guns[i];
+                    if (otherGun.Gun == gun) continue;
+
+                    if (otherGun.Rectangle.Contains(mouse.Position.ToVector2()) &&
+                        otherGun.Gun.Level == gun.Level &&
+                        otherGun.Gun.GetType() == gun.GetType())
+                    {
+                        Guns.RemoveAll(x => x.Gun == gun);
+                        otherGun.Gun.Level += 1;
+
+                        if (EquippedGun == gun)
+                        {
+                            ChangeGun();
+                        }
+
+                        Guns[i] = otherGun;
+                    }
                 }
             }
 
@@ -419,9 +445,11 @@ public class PlayerModel : BaseCreatureModel
 
                 GlobalVariables.SpriteBatchInterface.Draw(GlobalVariables.Pixel, gunInvRect, gun.Gun.Color);
 
-                var textNameSize = GlobalVariables.Font.MeasureString(gun.Gun.Name);
+                var text = gun.Gun.Level > 1 ? $"{gun.Gun.Name} +{gun.Gun.Level - 1}" : gun.Gun.Name;
 
-                GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, gun.Gun.Name, new Vector2(gunInvLabelRect.X + gunInvLabelRect.Width / 2 - textNameSize.X / 2, gunInvLabelRect.Y + itemSpace * 2), Color.White);
+                var textNameSize = GlobalVariables.Font.MeasureString(text);
+
+                GlobalVariables.SpriteBatchInterface.DrawString(GlobalVariables.Font, text, new Vector2(gunInvLabelRect.X + gunInvLabelRect.Width / 2 - textNameSize.X / 2, gunInvLabelRect.Y + itemSpace * 2), Color.White);
             }
         }
 

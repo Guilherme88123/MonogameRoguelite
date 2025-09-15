@@ -20,6 +20,8 @@ public abstract class BaseGunModel : BaseCollectableModel
     public float DelayAtual { get; set; }
     public float BulletSpeedFactor { get; set; } = 1f;
 
+    public int Level { get; set; } = 1;
+
     public BaseGunModel((float x, float y) position) : base(position)
     {
         Size = new(32, 8);
@@ -37,7 +39,7 @@ public abstract class BaseGunModel : BaseCollectableModel
         {
             var qtBullets = entityType.Value;
 
-            if (User is PlayerModel player && player.Inventory.Any(x => x is TwinsBulletModel)) qtBullets *= 2;
+            if (User is PlayerModel player && player.Inventory.Any(x => x.Item is TwinsBulletModel)) qtBullets *= 2;
 
             if (qtBullets == 1)
             {
@@ -58,7 +60,7 @@ public abstract class BaseGunModel : BaseCollectableModel
             }
         }
 
-        DelayAtual = Delay;
+        DelayAtual = (float)(Delay - (Delay * 0.1) * (Level - 1));
     }
 
     private void CreateBullet(Type type)
@@ -68,7 +70,9 @@ public abstract class BaseGunModel : BaseCollectableModel
 
     private void CreateBullet(Type type, Vector2 direction)
     {
-        var instance = (BaseEntityModel)Activator.CreateInstance(type, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User, BulletSpeedFactor)!;
+        var gunSpeed = (float)(BulletSpeedFactor + (BulletSpeedFactor * 0.1) * (Level - 1));
+
+        var instance = (BaseEntityModel)Activator.CreateInstance(type, ((int)User.CenterPosition.X, (int)User.CenterPosition.Y), direction, User, gunSpeed)!;
         instance.Position -= new Vector2(instance.Size.X / 2, instance.Size.Y / 2);
         GlobalVariables.CurrentRoom.EntitiesToAdd.Add(instance);
     }
