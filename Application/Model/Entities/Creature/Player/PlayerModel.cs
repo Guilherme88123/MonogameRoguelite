@@ -210,15 +210,13 @@ public class PlayerModel : BaseCreatureModel
                         otherGun.Gun.Level == gun.Level &&
                         otherGun.Gun.GetType() == gun.GetType())
                     {
-                        Guns.RemoveAll(x => x.Gun == gun);
                         otherGun.Gun.Level += 1;
 
-                        if (EquippedGun == gun)
-                        {
-                            ChangeGun();
-                        }
+                        if (EquippedGun == gun) ChangeGun();
 
                         Guns[i] = otherGun;
+
+                        Guns.RemoveAll(x => x.Gun == gun);
                     }
                 }
             }
