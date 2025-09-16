@@ -1,7 +1,9 @@
-﻿namespace Application.Interface.Menu;
+﻿using Microsoft.Xna.Framework;
+
+namespace Application.Interface.Menu;
 
 public interface IMenuService
 {
     void DrawMenu();
-    void Update();
+    void Update(GameTime gameTime);
 }

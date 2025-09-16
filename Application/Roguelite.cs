@@ -90,7 +90,7 @@ public class Roguelite : Game
         }
         else if (GameStatus == GameStatusType.MainMenu)
         {
-            MenuService.Update();
+            MenuService.Update(gameTime);
         }
 
         base.Update(gameTime);

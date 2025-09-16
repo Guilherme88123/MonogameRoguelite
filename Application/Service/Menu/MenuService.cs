@@ -13,6 +13,9 @@ public class MenuService : IMenuService
     private List<BaseElementModel> MenuElements = new();
     private Rectangle Rectangle = new();
 
+    private float Delay = 0.3f;
+    private float DelayAtual { get; set; }
+
     private List<(int, int)> WindowsSizes = new()
     {
         (800, 600),
@@ -25,6 +28,9 @@ public class MenuService : IMenuService
 
     public MenuService()
     {
+        MenuElements.Add(new ButtonModel());
+        MenuElements.Add(new ButtonModel());
+        MenuElements.Add(new ButtonModel());
         AtualizarMenu();
     }
 
@@ -41,10 +47,12 @@ public class MenuService : IMenuService
         }
     }
 
-    public void Update()
+    public void Update(GameTime gameTime)
     {
         var mouse = Mouse.GetState();
         var mousePos = new Point(mouse.X, mouse.Y);
+
+        DelayAtual -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         foreach (var element in MenuElements)
         {
@@ -53,8 +61,11 @@ public class MenuService : IMenuService
             {
                 element.IsHover = true;
 
-                if (mouse.LeftButton == ButtonState.Pressed)
+                if (mouse.LeftButton == ButtonState.Pressed && DelayAtual < 0)
+                {
                     element.Click?.Invoke();
+                    DelayAtual = Delay;
+                }
             }
             else
             {
@@ -70,13 +81,11 @@ public class MenuService : IMenuService
         GlobalVariables.Graphics.PreferredBackBufferWidth = width;
         GlobalVariables.Graphics.PreferredBackBufferHeight = height;
         GlobalVariables.Graphics.ApplyChanges();
-        //AtualizarMenu();
+        AtualizarMenu();
     }
 
     private void AtualizarMenu()
     {
-        MenuElements.Clear();
-
         var width = GlobalVariables.Graphics.PreferredBackBufferWidth / 2;
         var height = GlobalVariables.Graphics.PreferredBackBufferHeight - 100;
         var x = GlobalVariables.Graphics.PreferredBackBufferWidth / 4;
@@ -84,23 +93,18 @@ public class MenuService : IMenuService
 
         Rectangle = new Rectangle(x, y, width, height);
 
-        var windowSize = new ButtonModel();
-        windowSize.Rectangle = new Rectangle(0, 0, width - 20, 50);
-        windowSize.Text = $"Toggle Window Size";
-        windowSize.Click += () => ToggleWindowSize();
+        MenuElements[0].Rectangle = new Rectangle(0, 0, width - 20, 50);
+        MenuElements[0].Text = $"Toggle Window Size";
+        MenuElements[0].Click = () => ToggleWindowSize();
 
-        var fullscreen = new ButtonModel();
-        fullscreen.Rectangle = new Rectangle(0, 0, width - 20, 50);
-        fullscreen.Text = "Toggle Fullscreen";
-        fullscreen.Click += () => GlobalVariables.Graphics.ToggleFullScreen();
+        MenuElements[1].Rectangle = new Rectangle(0, 0, width - 20, 50);
+        MenuElements[1].Text = "Toggle Fullscreen";
+        MenuElements[1].Click = () => GlobalVariables.Graphics.ToggleFullScreen();
 
-        var exit = new ButtonModel();
-        exit.Rectangle = new Rectangle(0, 0, width - 20, 50);
-        exit.Text = "Exit";
-        exit.Click += () => GlobalVariables.Game.Exit();
+        MenuElements[2].Rectangle = new Rectangle(0, 0, width - 20, 50);
+        MenuElements[2].Text = "Exit";
+        MenuElements[2].Click = () => GlobalVariables.Game.Exit();
 
-        MenuElements.Add(windowSize);
-        MenuElements.Add(fullscreen);
-        MenuElements.Add(exit);
+
     }
 }
