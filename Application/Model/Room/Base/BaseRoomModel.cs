@@ -164,7 +164,7 @@ public abstract class BaseRoomModel
         }
     }
 
-    public void OnRoomEnter()
+    public virtual void OnRoomEnter()
     {
         if (Loaded) return;
 

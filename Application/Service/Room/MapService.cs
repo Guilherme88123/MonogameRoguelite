@@ -195,6 +195,8 @@ public class MapService : IMapService
 
     private BaseRoomModel GetRandomRoom()
     {
+        return new MercantRoomModel();
+
         var x = Random.Next(11 + 1);
 
         return x switch
