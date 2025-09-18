@@ -9,6 +9,8 @@ namespace Application.Model.Entities.Collectable.Base;
 public class BaseCollectableModel : BaseEntityModel
 {
     public RarityType Rarity { get; set; } = RarityType.Common;
+    public bool RequireBuy { get; set; } = false;
+    public int Price { get; set; }
 
     public BaseCollectableModel((float x, float y) position) : base(position)
     {

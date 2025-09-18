@@ -1,13 +1,10 @@
-﻿using Application.Enum;
-using Application.Infrastructure;
+﻿using Application.Infrastructure;
 using Application.Model.Entities.Collectable.Base;
-using Application.Model.Entities.Collectable.Item;
 using Application.Service.Collectable;
 using Microsoft.Xna.Framework;
 using MonogameRoguelite.Dto;
 using MonogameRoguelite.Model.Room.Base;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Application.Model.Room;
 
@@ -30,23 +27,35 @@ public class MercantRoomModel : BaseRoomModel
     {
         base.OnRoomEnter();
 
-        Items.Add(CollectableFactory.GetRandomCollectable(RngHelper.GetRandomRarity()));
-        Items.Add(CollectableFactory.GetRandomCollectable(RngHelper.GetRandomRarity()));
-        Items.Add(CollectableFactory.GetRandomCollectable(RngHelper.GetRandomRarity()));
+        for (var i = 0; i < 3; i++)
+        {
+            var item = CollectableFactory.GetRandomCollectable(RngHelper.GetRandomRarity());
 
-        Items[0].Position = new(256, 256);
-        Items[0].Direction = new(0, 0);
-        Items[0].IsCollidable = false;
+            item.Position = new(64 * (5 * (i + 1)) - item.Size.X / 2, 64 * 10 - item.Size.Y / 2);
+            item.Direction = new(0, 0);
+            item.RequireBuy = true;
+            item.Price = RngHelper.GetPriceByRarity(item.Rarity);
 
-        Items[1].Position = new(256, 512);
-        Items[1].Direction = new(0, 0);
-        Items[1].IsCollidable = false;
-
-        Items[2].Position = new(512, 256);
-        Items[2].Direction = new(0, 0);
-        Items[2].IsCollidable = false;
+            Items.Add(item);
+        }
 
         GlobalVariables.CurrentRoom.EntitiesToAdd.AddRange(Items);
+    }
+
+    public override void Draw()
+    {
+        base.Draw();
+
+        foreach (var item in Items)
+        {
+            if (!item.RequireBuy) continue;
+
+            var text = $"Price: {item.Price}";
+
+            var textNameSize = GlobalVariables.Font.MeasureString(text);
+
+            GlobalVariables.SpriteBatchEntities.DrawString(GlobalVariables.Font, text, new Vector2(item.Position.X + item.Size.X / 2 - textNameSize.X / 2, item.Position.Y + item.Size.Y + textNameSize.Y + 5), Color.White);
+        }
     }
 
     protected override string[] AddObstacles()

@@ -25,7 +25,7 @@ namespace MonogameRoguelite.Model.Entities.Creature.Player;
 
 public class PlayerModel : BaseCreatureModel
 {
-    public int Coins { get; set; }
+    public int Coins { get; set; } = 100000;
     public int MaxXp { get; set; }
     public int Xp { get; set; }
     public int Level { get; set; }
@@ -257,6 +257,18 @@ public class PlayerModel : BaseCreatureModel
     {
         if (model is BaseCollectableModel colec && colec.Speed.LengthSquared() < 0.1f)
         {
+            if (colec.RequireBuy)
+            {
+                if (Coins >= colec.Price)
+                {
+                    Coins -= colec.Price;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             if (colec is BaseGunModel gun && Guns.Count < MaxGuns)
             {
                 Guns.Add((gun, Rectangle.Empty));
@@ -271,6 +283,8 @@ public class PlayerModel : BaseCreatureModel
                 item.Apply();
                 item.Destroy();
             }
+
+            colec.RequireBuy = false;
         }
 
         if (model is BaseEnemyModel enemy && DelayDanoAtual <= 0)
@@ -326,6 +340,8 @@ public class PlayerModel : BaseCreatureModel
 
         base.Colision(model);
     }
+
+    #region Draw
 
     public override void Draw()
     {
@@ -471,4 +487,6 @@ public class PlayerModel : BaseCreatureModel
 
         GlobalVariables.SpriteBatchEntities.Draw(GlobalVariables.Pixel, new Rectangle((int)(CenterPosition.X - mugenSize / 2), (int)(CenterPosition.Y - mugenSize / 2),(int)mugenSize, (int)mugenSize), Color.Purple * 0.3f);
     }
+
+    #endregion
 }

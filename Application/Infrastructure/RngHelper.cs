@@ -58,4 +58,18 @@ public static class RngHelper
             RarityType.Secret => new Color(0, 0, 0),
         };
     }
+
+    public static int GetPriceByRarity(RarityType rarity)
+    {
+        return rarity switch
+        {
+            RarityType.Common => 10,
+            RarityType.Uncommon => 20,
+            RarityType.Rare => 30,
+            RarityType.Epic => 50,
+            RarityType.Legendary => 100,
+            RarityType.Mythic => 150,
+            RarityType.Secret => 20000000,
+        };
+    }
 }
