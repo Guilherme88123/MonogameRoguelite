@@ -274,17 +274,18 @@ public class PlayerModel : BaseCreatureModel
                 Guns.Add((gun, Rectangle.Empty));
                 gun.User = this;
                 gun.Destroy();
+                gun.RequireBuy = false;
 
                 if (EquippedGun == null) EquippedGun = gun;
             }
             else if (colec is BaseItemModel item)
             {
                 Inventory.Add((item, Rectangle.Empty));
+                item.RequireBuy = false;
                 item.Apply();
                 item.Destroy();
             }
 
-            colec.RequireBuy = false;
         }
 
         if (model is BaseEnemyModel enemy && DelayDanoAtual <= 0)

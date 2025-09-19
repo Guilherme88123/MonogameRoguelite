@@ -50,7 +50,7 @@ public class BaseBulletModel : BaseEntityModel
     public override void WallColision(WallModel model)
     {
         if (Sender is PlayerModel && 
-            GlobalVariables.Player.Inventory.Any(x => x is RubberBulletsModel) && 
+            GlobalVariables.Player.Inventory.Any(x => x.Item is RubberBulletsModel) && 
             QuantityRicochets < MaxQuantityRicochets)
         {
             var rect = Rectangle;

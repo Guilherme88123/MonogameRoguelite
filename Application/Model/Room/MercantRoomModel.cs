@@ -10,7 +10,7 @@ namespace Application.Model.Room;
 
 public class MercantRoomModel : BaseRoomModel
 {
-    public List<BaseCollectableModel> Items { get; set; } = new();
+    private List<BaseCollectableModel> Items { get; set; } = new();
 
     public MercantRoomModel() : base(20, 20)
     {
@@ -25,7 +25,7 @@ public class MercantRoomModel : BaseRoomModel
 
     public override void OnRoomEnter()
     {
-        base.OnRoomEnter();
+        if (Loaded) return;
 
         for (var i = 0; i < 3; i++)
         {
@@ -40,6 +40,8 @@ public class MercantRoomModel : BaseRoomModel
         }
 
         GlobalVariables.CurrentRoom.EntitiesToAdd.AddRange(Items);
+
+        base.OnRoomEnter();
     }
 
     public override void Draw()
